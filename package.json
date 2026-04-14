@@ -1,0 +1,10 @@
+{
+  "name": "vassouras-e-bigodes",
+  "version": "0.1.0",
+  "scripts": {
+    "start": "http-server -p 3000 -o"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
