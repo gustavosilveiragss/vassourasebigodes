@@ -1,0 +1,21 @@
+class Fase6 extends Fase {
+  constructor() {
+    let gatos = [
+      new Tom(150, 100),
+      new Salem(750, 110),
+      new Fifi(450, 70),
+      new Miau(180, 340),
+      new Fofinho(700, 300)
+    ]
+    let obs = [
+      new Obstaculo(300, 180, 300, 28),
+      new Obstaculo(100, 360, 140, 28),
+      new Obstaculo(660, 360, 140, 28)
+    ]
+    let bolinhas = [
+      new Bolinha(300, 200, gatos),
+      new Bolinha(600, 200, gatos)
+    ]
+    super(6, gatos, obs, bolinhas, 120)
+  }
+}
