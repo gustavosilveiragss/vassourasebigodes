@@ -25,10 +25,36 @@ class Fase extends Cena {
 
     this.vassoura.update(this.gatos)
 
-    this.bolinhas.forEach(b => b.update())
+    this.bolinhas.forEach(b => b.update(this.obstaculos))
 
     for (let i = 0; i < this.gatos.length; i++) {
       this.gatos[i].update(this.bolinhas, this.obstaculos)
+    }
+
+    for (let i = 0; i < this.gatos.length; i++) {
+      for (let j = i + 1; j < this.gatos.length; j++) {
+        let a = this.gatos[i]
+        let b = this.gatos[j]
+        let d = dist(a.pos.x, a.pos.y, b.pos.x, b.pos.y)
+        let minD = a.raio + b.raio
+        if (d < minD && d > 0) {
+          let nx = (b.pos.x - a.pos.x) / d
+          let ny = (b.pos.y - a.pos.y) / d
+          let overlap = minD - d
+          if (!a.preso && !b.preso) {
+            a.pos.x -= nx * overlap * 0.5
+            a.pos.y -= ny * overlap * 0.5
+            b.pos.x += nx * overlap * 0.5
+            b.pos.y += ny * overlap * 0.5
+          } else if (!a.preso) {
+            a.pos.x -= nx * overlap
+            a.pos.y -= ny * overlap
+          } else if (!b.preso) {
+            b.pos.x += nx * overlap
+            b.pos.y += ny * overlap
+          }
+        }
+      }
     }
 
     for (let i = 0; i < this.slotsOcupados.length; i++) {
