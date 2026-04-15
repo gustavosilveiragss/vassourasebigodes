@@ -15,7 +15,11 @@ class Salem extends Gato {
     if (d < 120) {
       let dir = createVector(this.pos.x - mx, this.pos.y - my)
       dir.normalize()
-      this.vel.add(p5.Vector.mult(dir, 3.5))
+      this.pos.x += dir.x * 90
+      this.pos.y += dir.y * 90
+      this.pos.x = constrain(this.pos.x, this.raio, LARGURA - this.raio)
+      this.pos.y = constrain(this.pos.y, this.raio, ALTURA - this.raio)
+      this.vel.set(0, 0)
       this.cooldown = 45
     }
   }
