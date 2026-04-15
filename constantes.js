@@ -1,7 +1,7 @@
-const LARGURA = 900
-const ALTURA = 600
+const LARGURA = 900;
+const ALTURA = 600;
 
-const ZONA = { x: 300, y: 490, w: 300, h: 90 }
+const SOFA = { x: 300, y: 490, w: 300, h: 90 };
 
 const CORES = {
   fundo: '#F5EDD6',
@@ -14,16 +14,16 @@ const CORES = {
   vassouraStroke: '#8B6914',
   bolinha: '#E86B6B',
   obstaculo: '#C4A882',
-  zona: 'rgba(168, 216, 168, 0.47)',
+  sofa: 'rgba(168, 216, 168, 0.47)',
   texto: '#3D2B1F'
-}
+};
 
 const VEL = {
   normal: 1.8,
   rapido: 2.8,
   lento: 1.0,
   muitoRapido: 3.5
-}
+};
 
 const RAIOS = {
   gato: 22,
@@ -31,7 +31,7 @@ const RAIOS = {
   fofinho: 16,
   vassoura: 22,
   bolinha: 10
-}
+};
 
 const SLOTS = [
   { x: 330, y: 525 },
@@ -39,4 +39,4 @@ const SLOTS = [
   { x: 450, y: 525 },
   { x: 510, y: 525 },
   { x: 570, y: 525 }
-]
+];

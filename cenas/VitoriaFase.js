@@ -1,35 +1,31 @@
 class VitoriaFase extends Cena {
-  constructor(score, proxFase) {
-    super()
-    this.score = score
-    this.proxFase = proxFase
+  constructor(proxFase) {
+    super();
+    this.proxFase = proxFase;
   }
 
   display() {
-    background(CORES.fundo)
+    background(CORES.fundo);
 
-    fill(CORES.texto)
-    textAlign(CENTER)
-    textSize(40)
-    text('Fase concluída!', LARGURA / 2, 200)
+    fill(CORES.texto);
+    textAlign(CENTER);
+    textSize(40);
+    text('Fase concluída!', LARGURA / 2, 220);
 
-    textSize(24)
-    text('Pontuação: ' + this.score, LARGURA / 2, 280)
-
-    textSize(16)
+    textSize(16);
     if (this.proxFase > 8) {
-      text('Você completou o jogo inteiro!', LARGURA / 2, 360)
-      text('Clique para voltar ao início', LARGURA / 2, 420)
+      text('Você varreu a casa inteira com sucesso!', LARGURA / 2, 310);
+      text('Clique para voltar ao início', LARGURA / 2, 370);
     } else {
-      text('Clique para a Fase ' + this.proxFase, LARGURA / 2, 390)
+      text('Clique para a Fase ' + this.proxFase, LARGURA / 2, 330);
     }
   }
 
   aoClicar() {
     if (this.proxFase > 8) {
-      trocarCena(new Inicio())
+      trocarCena(new Inicio());
     } else {
-      trocarCena(new IntroFase(this.proxFase))
+      trocarCena(new IntroFase(this.proxFase));
     }
   }
 }
