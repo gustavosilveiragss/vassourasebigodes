@@ -12,7 +12,7 @@ class Gato {
     this.alvoPos = null
     this.stun = 0
     this.resistencia = 1.0
-    this.fricao = 0.86
+    this.fricao = 0.82
   }
 
   update(bolinhas, obstaculos) {
@@ -73,10 +73,6 @@ class Gato {
   }
 
   display() {
-    fill(0, 0, 0, 30)
-    noStroke()
-    ellipse(this.pos.x + 4, this.pos.y + 4, this.raio * 2.2, this.raio * 2)
-
     if (this.sprite) {
       imageMode(CENTER)
       image(this.sprite, this.pos.x, this.pos.y, this.raio * 2.2, this.raio * 2)
