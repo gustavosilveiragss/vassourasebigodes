@@ -12,7 +12,7 @@ class Vassoura {
       if (d < RAIOS.vassoura + g.raio) {
         let dir = createVector(g.pos.x - mx, g.pos.y - my)
         dir.normalize()
-        let forca = velMouse.mag() * 0.4 + 0.5
+        let forca = (velMouse.mag() * 0.4 + 0.5) * g.resistencia
         g.empurrar(dir, forca)
       }
     }

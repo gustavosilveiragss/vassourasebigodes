@@ -11,6 +11,7 @@ class Gato {
     this.preso = false
     this.alvoPos = null
     this.stun = 0
+    this.resistencia = 1.0
   }
 
   update(bolinhas, obstaculos) {

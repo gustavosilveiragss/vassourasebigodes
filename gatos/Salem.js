@@ -2,6 +2,7 @@ class Salem extends Gato {
   constructor(x, y) {
     super(x, y, RAIOS.gato, CORES.salem, 'Salem')
     this.cooldown = 0
+    this.resistencia = 0.55
   }
 
   mover() {
