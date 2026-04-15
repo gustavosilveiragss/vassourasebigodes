@@ -12,6 +12,7 @@ class Gato {
     this.alvoPos = null
     this.stun = 0
     this.resistencia = 1.0
+    this.fricao = 0.86
   }
 
   update(bolinhas, obstaculos) {
@@ -46,7 +47,7 @@ class Gato {
       this.mover()
     }
 
-    this.vel.mult(0.92)
+    this.vel.mult(this.fricao)
     this.pos.add(this.vel)
     this.pos.x = constrain(this.pos.x, this.raio, LARGURA - this.raio)
     this.pos.y = constrain(this.pos.y, this.raio, ALTURA - this.raio)
