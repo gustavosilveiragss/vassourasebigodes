@@ -6,18 +6,26 @@ class Bolinha {
     this.gatos = gatos
     this.gatoAtraido = null
     this.timer = 60
+    this.timerChase = 0
   }
 
-  update() {
+  update(obstaculos) {
     if (this.gatoAtraido != null) {
+      this.timerChase++
       let d = dist(this.pos.x, this.pos.y, this.gatoAtraido.pos.x, this.gatoAtraido.pos.y)
 
       if (d < this.raio + this.gatoAtraido.raio) {
         this.gatoAtraido.atraido = false
         this.gatoAtraido = null
+        this.timerChase = 0
         let ang = random(TWO_PI)
         this.vel = createVector(cos(ang) * 5, sin(ang) * 5)
-        this.timer = 0
+        this.timer = -180
+      } else if (this.timerChase > 600) {
+        this.gatoAtraido.atraido = false
+        this.gatoAtraido = null
+        this.timerChase = 0
+        this.timer = -120
       }
     }
 
@@ -33,11 +41,14 @@ class Bolinha {
       this.pos.y = constrain(this.pos.y, this.raio, ALTURA - this.raio)
     }
 
+    for (let obs of obstaculos) {
+      obs.resolverColisao(this)
+    }
+
     if (this.gatoAtraido == null) {
       this.timer++
-
       let parada = this.vel.mag() < 0.3
-      if (this.timer > 900 || (parada && this.timer > 60)) {
+      if (parada && this.timer > 0) {
         this.selecionarGato()
       }
     }
@@ -49,6 +60,7 @@ class Bolinha {
     g.atraido = true
     this.gatoAtraido = g
     this.timer = 0
+    this.timerChase = 0
   }
 
   display() {

@@ -13,8 +13,8 @@ class Fase6 extends Fase {
       new Obstaculo(660, 360, 140, 28)
     ]
     let bolinhas = [
-      new Bolinha(300, 200, gatos),
-      new Bolinha(600, 200, gatos)
+      new Bolinha(200, 280, gatos),
+      new Bolinha(700, 280, gatos)
     ]
     super(6, gatos, obs, bolinhas, 120)
   }
