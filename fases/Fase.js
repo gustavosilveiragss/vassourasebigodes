@@ -6,7 +6,7 @@ class Fase extends Cena {
     this.obstaculos = obstaculos
     this.bolinhas = bolinhas
     this.timer = tempoSeg * 60
-    this.framesNaZona = 0
+    this.slotsOcupados = [null, null, null, null, null]
     this.vassoura = new Vassoura()
     this.tutorialFrames = 0
   }
@@ -31,18 +31,33 @@ class Fase extends Cena {
       this.gatos[i].update(this.bolinhas, this.obstaculos)
     }
 
-    let naZona = 0
+    for (let i = 0; i < this.slotsOcupados.length; i++) {
+      if (this.slotsOcupados[i] && !this.slotsOcupados[i].preso) {
+        this.slotsOcupados[i] = null
+      }
+    }
+
     for (let g of this.gatos) {
-      if (g.naZona()) naZona++
+      if (g.naZona() && !g.preso && !g.atraido) {
+        for (let i = 0; i < this.slotsOcupados.length; i++) {
+          if (!this.slotsOcupados[i]) {
+            this.slotsOcupados[i] = g
+            g.preso = true
+            g.alvoPos = SLOTS[i]
+            break
+          }
+        }
+      }
     }
 
-    if (naZona == this.gatos.length) {
-      this.framesNaZona++
-    } else {
-      this.framesNaZona = 0
+    let todosPresos = true
+    for (let g of this.gatos) {
+      if (!g.preso) {
+        todosPresos = false
+        break
+      }
     }
-
-    if (this.framesNaZona >= 120) {
+    if (todosPresos) {
       trocarCena(new VitoriaFase(this.calcScore(), this.numero + 1))
     }
 
@@ -71,8 +86,8 @@ class Fase extends Cena {
       b.display()
     }
 
-    for (let g of this.gatos) {
-      g.display()
+    for (let i = 0; i < this.gatos.length; i++) {
+      this.gatos[i].display()
     }
 
     this.vassoura.display()

@@ -8,6 +8,8 @@ class Gato {
     this.sprite = null
     this.som = null
     this.atraido = false
+    this.preso = false
+    this.alvoPos = null
     this.stun = 0
   }
 
@@ -21,6 +23,17 @@ class Gato {
       if (b.gatoAtraido === this) {
         minhaBolinha = b
         break
+      }
+    }
+
+    if (this.preso) {
+      if (minhaBolinha) {
+        this.preso = false
+      } else {
+        this.pos.x += (this.alvoPos.x - this.pos.x) * 0.15
+        this.pos.y += (this.alvoPos.y - this.pos.y) * 0.15
+        this.vel.set(0, 0)
+        return
       }
     }
 
