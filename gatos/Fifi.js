@@ -31,9 +31,9 @@ class Fifi extends Gato {
     }
 
     if (this.movendo) {
-      let ang = atan2(my - this.pos.y, mx - this.pos.x) + this.angOffset
+      let ang = atan2(this.pos.y - my, this.pos.x - mx) + this.angOffset
       let dir = createVector(cos(ang), sin(ang))
-      this.vel.add(p5.Vector.mult(dir, VEL.normal))
+      this.vel.add(p5.Vector.mult(dir, VEL.lento))
     }
   }
 }

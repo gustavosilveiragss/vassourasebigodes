@@ -14,7 +14,7 @@ class Salem extends Gato {
     if (d < 120) {
       let dir = createVector(this.pos.x - mx, this.pos.y - my)
       dir.normalize()
-      this.vel.add(p5.Vector.mult(dir, 8))
+      this.vel.add(p5.Vector.mult(dir, 3.5))
       this.cooldown = 45
     }
   }
