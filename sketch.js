@@ -1,4 +1,5 @@
 let cenaAtual
+let mx, my
 
 function trocarCena(novaCena) {
   cenaAtual = novaCena
@@ -11,6 +12,8 @@ function setup() {
 }
 
 function draw() {
+  mx = constrain(mouseX, 0, LARGURA - 1)
+  my = constrain(mouseY, 0, ALTURA - 1)
   cenaAtual.update()
   cenaAtual.display()
 }

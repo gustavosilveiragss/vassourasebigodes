@@ -10,9 +10,9 @@ class Salem extends Gato {
       return
     }
 
-    let d = dist(mouseX, mouseY, this.pos.x, this.pos.y)
+    let d = dist(mx, my, this.pos.x, this.pos.y)
     if (d < 120) {
-      let dir = createVector(this.pos.x - mouseX, this.pos.y - mouseY)
+      let dir = createVector(this.pos.x - mx, this.pos.y - my)
       dir.normalize()
       this.vel.add(p5.Vector.mult(dir, 8))
       this.cooldown = 45

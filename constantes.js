@@ -29,6 +29,14 @@ const RAIOS = {
   gato: 22,
   miau: 30,
   fofinho: 16,
-  vassoura: 40,
+  vassoura: 22,
   bolinha: 10
 }
+
+const SLOTS = [
+  { x: 330, y: 525 },
+  { x: 390, y: 525 },
+  { x: 450, y: 525 },
+  { x: 510, y: 525 },
+  { x: 570, y: 525 }
+]
