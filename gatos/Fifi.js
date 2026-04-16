@@ -13,6 +13,7 @@ class Fifi extends Gato {
       fuga.normalize();
       this.direcao = atan2(fuga.y, fuga.x);
     }
+    
     if (this.frames > 0) {
       this.frames--;
       this.direcao += 0.05;

@@ -17,6 +17,7 @@ class Obstaculo {
         objeto.velocidade.set(0, 0);
         return;
       }
+      
       const direcao = createVector(objeto.posicao.x - proximoX, objeto.posicao.y - proximoY);
       direcao.normalize();
       objeto.posicao.x = proximoX + direcao.x * (objeto.raio + 1);

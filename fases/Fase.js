@@ -58,6 +58,7 @@ class Fase extends Cena {
           break;
         }
       }
+
       if (gato.noSofa() && !gato.sentado && !alvoDeBolinha) {
         for (let i = 0; i < this.slotsOcupados.length; i++) {
           if (!this.slotsOcupados[i]) {
@@ -77,6 +78,7 @@ class Fase extends Cena {
         break;
       }
     }
+    
     if (todosSentados) {
       trocarCena(new VitoriaFase(this.numero + 1));
     }

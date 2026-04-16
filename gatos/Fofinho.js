@@ -9,6 +9,7 @@ class Fofinho extends Gato {
       this.cooldown--;
       return;
     }
+    
     const direcao = createVector(cursorX - this.posicao.x, cursorY - this.posicao.y);
     direcao.normalize();
     this.velocidade.set(direcao.x * 100, direcao.y * 100);

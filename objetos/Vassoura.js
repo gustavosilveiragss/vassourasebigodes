@@ -9,8 +9,8 @@ class Vassoura {
     for (let i = 0; i < gatos.length; i++) {
       const gato = gatos[i];
       if (gato.sentado) continue;
-      const distancia = dist(cursorX, cursorY, gato.posicao.x, gato.posicao.y);
 
+      const distancia = dist(cursorX, cursorY, gato.posicao.x, gato.posicao.y);
       if (distancia < RAIOS.vassoura + gato.raio) {
         const direcao = createVector(gato.posicao.x - cursorX, gato.posicao.y - cursorY);
         direcao.normalize();
@@ -22,21 +22,11 @@ class Vassoura {
 
   display() {
     push();
-    translate(cursorX + 4, cursorY + 4);
-    rotate(PI / 4);
-    rectMode(CENTER);
-    fill(0, 0, 0, 30);
-    noStroke();
-    rect(0, 0, 6, 38, 3);
-    pop();
-
-    push();
     translate(cursorX, cursorY);
     rotate(PI / 4);
     rectMode(CENTER);
     fill(CORES.vassoura);
-    stroke(CORES.vassouraStroke);
-    strokeWeight(2);
+    noStroke();
     rect(0, 0, 6, 38, 3);
     pop();
   }
