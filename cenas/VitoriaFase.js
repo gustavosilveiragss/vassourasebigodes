@@ -1,8 +1,10 @@
 class VitoriaFase extends Cena {
+  /** @param {number} proximaFase */
   constructor(proximaFase) {
     super();
     this.proximaFase = proximaFase;
   }
+
 
   display() {
     background(CORES.fundo);
@@ -13,6 +15,7 @@ class VitoriaFase extends Cena {
     text('Fase concluída!', LARGURA / 2, 220);
 
     textSize(16);
+    
     if (this.proximaFase > CLASSES_FASE.length - 1) {
       text('Você varreu a casa inteira com sucesso!', LARGURA / 2, 310);
       text('Clique para voltar ao início', LARGURA / 2, 370);

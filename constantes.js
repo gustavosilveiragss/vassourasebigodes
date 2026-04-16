@@ -18,6 +18,8 @@ const CORES = {
   texto: '#3D2B1F'
 };
 
+
+
 const VELOCIDADES = {
   normal: 1.8,
   lento: 0.8
@@ -31,6 +33,7 @@ const RAIOS = {
   bolinha: 10
 };
 
+// posicoes onde os gatos sentam no sofa
 const SLOTS = [
   { x: 330, y: 525 },
   { x: 390, y: 525 },

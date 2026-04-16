@@ -1,4 +1,5 @@
 class Pausa extends Cena {
+  /** @param {Fase} fase */
   constructor(fase) {
     super();
     this.fase = fase;
@@ -13,6 +14,7 @@ class Pausa extends Cena {
     noStroke();
     rect(0, 0, LARGURA, ALTURA);
 
+
     fill(255);
     textAlign(CENTER);
     textSize(48);
@@ -22,7 +24,9 @@ class Pausa extends Cena {
     text('P ou ESC para continuar', LARGURA / 2, ALTURA / 2 + 30);
   }
 
+  /** @param {number} tecla */
   aoApertarTecla(tecla) {
+    // 80 = P, 27 = esc
     if (tecla === 80 || tecla === 27) {
       trocarCena(this.fase);
     }

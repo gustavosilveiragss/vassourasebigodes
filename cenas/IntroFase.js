@@ -1,3 +1,4 @@
+// gatos novos que aparecem em cada fase, mostrados na intro
 const GATOS_NOVOS = {
   1: [
     { nome: 'Tom', texto: 'Esse gato é extremamente carente e vai na sua direção pra onde você for' }
@@ -12,6 +13,7 @@ const GATOS_NOVOS = {
   ]
 };
 
+// outros desafios novos por fase (bolinha, etc)
 const DESAFIOS_NOVOS = {
   4: [
     { nome: 'Bolinha', texto: 'Uma bolinha fica parada no chão, atrai um gato aleatório e depois quica pra outro canto. Vai bagunçar seus planos e introduzir caos generalizado', cor: CORES.bolinha }
@@ -21,6 +23,7 @@ const DESAFIOS_NOVOS = {
 const CLASSES_FASE = [Fase, Fase1, Fase2, Fase3, Fase4, Fase5];
 
 class IntroFase extends Cena {
+  /** @param {number} numero */
   constructor(numero) {
     super();
     this.numero = numero;
@@ -47,6 +50,7 @@ class IntroFase extends Cena {
       textSize(20);
       text('Gatos novos nesta fase:', LARGURA / 2, y);
 
+      // espalha os cards horizontalmente em volta do centro
       const inicioX = (LARGURA / 2) - ((this.gatosNovos.length - 1) * 160);
       for (let i = 0; i < this.gatosNovos.length; i++) {
         const gato = this.gatosNovos[i];
@@ -54,7 +58,7 @@ class IntroFase extends Cena {
 
         fill(200);
         noStroke();
-        rect(centroX - 40, y + 20, 80, 80, 8);
+        rect(centroX - 40, y + 20, 80, 80, 8); // placeholder do sprite
 
         fill(CORES.texto);
         textAlign(CENTER);
@@ -68,6 +72,7 @@ class IntroFase extends Cena {
       y += 210;
     }
 
+    // bloco de desafios (bolinha etc)
     if (temDesafios) {
       fill(CORES.texto);
       textAlign(CENTER);
@@ -95,6 +100,7 @@ class IntroFase extends Cena {
       y += 200;
     }
 
+    // fase sem novidade: mensagem padrao
     if (!temGatos && !temDesafios) {
       fill(CORES.texto);
       textAlign(CENTER);
@@ -108,12 +114,20 @@ class IntroFase extends Cena {
     text('Clique para jogar', LARGURA / 2, 555);
   }
 
+  /**
+   * quebra texto em varias linhas medindo a largura
+   * @param {string} texto
+   * @param {number} centroX
+   * @param {number} inicioY
+   * @param {number} larguraMax
+   */
   desenharTextoQuebrado(texto, centroX, inicioY, larguraMax) {
     const palavras = texto.split(' ');
     let linha = '';
     let linhaY = inicioY;
 
     for (let i = 0; i < palavras.length; i++) {
+      // se proxima palavra estoura largura, manda a linha atual e comeca outra
       if (textWidth(linha + palavras[i] + ' ') > larguraMax && linha !== '') {
         text(linha.trim(), centroX, linhaY);
         linha = palavras[i] + ' ';
@@ -123,6 +137,7 @@ class IntroFase extends Cena {
       }
     }
 
+    // sobra de linha no final
     if (linha.trim() !== '') {
       text(linha.trim(), centroX, linhaY);
     }
