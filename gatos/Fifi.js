@@ -1,42 +1,23 @@
 class Fifi extends Gato {
   constructor(x, y) {
     super(x, y, RAIOS.gato, CORES.fifi, 'Fifi');
-    this.movendo = false;
     this.frames = 0;
-    this.duracaoAtual = 120;
-    this.dirAtual = 0;
-  }
-
-  calcDir() {
-    const anguloBase = atan2(this.pos.y - cursorY, this.pos.x - cursorX);
-    return anguloBase + random(-PI / 3, PI / 3);
+    this.direcao = 0;
   }
 
   mover() {
-    this.frames++;
-    const distanciaMouse = dist(cursorX, cursorY, this.pos.x, this.pos.y);
-
-    if (this.frames >= this.duracaoAtual) {
-      this.movendo = !this.movendo;
-      this.frames = 0;
-      if (this.movendo) {
-        this.dirAtual = this.calcDir();
-        this.duracaoAtual = floor(random(40, 60));
-      } else {
-        this.duracaoAtual = floor(random(100, 140));
-      }
+    const distanciaCursor = dist(cursorX, cursorY, this.posicao.x, this.posicao.y);
+    if (this.frames === 0 && distanciaCursor < 120) {
+      this.frames = 40;
+      const fuga = createVector(this.posicao.x - cursorX, this.posicao.y - cursorY);
+      fuga.normalize();
+      this.direcao = atan2(fuga.y, fuga.x);
     }
-
-    if (!this.movendo && distanciaMouse < 130) {
-      this.movendo = true;
-      this.frames = 0;
-      this.dirAtual = this.calcDir();
-      this.duracaoAtual = 180;
-    }
-
-    if (this.movendo) {
-      const dir = createVector(cos(this.dirAtual), sin(this.dirAtual));
-      this.vel.add(p5.Vector.mult(dir, VEL.rapido));
+    if (this.frames > 0) {
+      this.frames--;
+      this.direcao += 0.05;
+      const vetorDirecao = createVector(cos(this.direcao), sin(this.direcao));
+      this.velocidade.add(p5.Vector.mult(vetorDirecao, VELOCIDADES.lento));
     }
   }
 }

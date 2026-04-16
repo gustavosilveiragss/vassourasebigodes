@@ -6,10 +6,10 @@ class Fofinho extends Gato {
 
   mover() {
     this.angulo += 0.06;
-    this.pos.x = cursorX + cos(this.angulo) * 150;
-    this.pos.y = cursorY + sin(this.angulo) * 150;
-    this.pos.x = constrain(this.pos.x, this.raio, LARGURA - this.raio);
-    this.pos.y = constrain(this.pos.y, this.raio, ALTURA - this.raio);
-    this.vel.set(0, 0);
+    this.posicao.x = cursorX + cos(this.angulo) * 80;
+    this.posicao.y = cursorY + sin(this.angulo) * 80;
+    this.posicao.x = constrain(this.posicao.x, this.raio, LARGURA - this.raio);
+    this.posicao.y = constrain(this.posicao.y, this.raio, ALTURA - this.raio);
+    this.velocidade.set(0, 0);
   }
 }

@@ -1,19 +1,19 @@
 class Vassoura {
   update(gatos) {
-    const anteriorCursorX = constrain(pmouseX, 0, LARGURA - 1);
-    const anteriorCursorY = constrain(pmouseY, 0, ALTURA - 1);
-    const velMouse = createVector(cursorX - anteriorCursorX, cursorY - anteriorCursorY);
+    const cursorAnteriorX = constrain(pmouseX, 0, LARGURA - 1);
+    const cursorAnteriorY = constrain(pmouseY, 0, ALTURA - 1);
+    const velocidadeMouse = createVector(cursorX - cursorAnteriorX, cursorY - cursorAnteriorY);
 
     for (let i = 0; i < gatos.length; i++) {
       const gato = gatos[i];
-      if (gato.preso) continue;
-      const distancia = dist(cursorX, cursorY, gato.pos.x, gato.pos.y);
+      if (gato.sentado) continue;
+      const distancia = dist(cursorX, cursorY, gato.posicao.x, gato.posicao.y);
 
       if (distancia < RAIOS.vassoura + gato.raio) {
-        const dir = createVector(gato.pos.x - cursorX, gato.pos.y - cursorY);
-        dir.normalize();
-        const forca = (velMouse.mag() * 0.4 + 0.5) * gato.resistencia;
-        gato.empurrar(dir, forca);
+        const direcao = createVector(gato.posicao.x - cursorX, gato.posicao.y - cursorY);
+        direcao.normalize();
+        const forca = ((velocidadeMouse.mag() * 0.4) + 0.5) * gato.friccao;
+        gato.empurrarVassoura(direcao, forca);
       }
     }
   }

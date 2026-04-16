@@ -1,24 +1,24 @@
 const GATOS_NOVOS = {
   1: [
-    { nome: 'Tom', texto: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Esse gatinho vai direto onde você está!' }
+    { nome: 'Tom', texto: 'Esse gato é extremamente carente e vai na sua direção pra onde você for' }
   ],
   2: [
-    { nome: 'Salem', texto: 'Lorem ipsum dolor sit amet. Filhote maluco que foge na hora errada!' },
-    { nome: 'Fifi', texto: 'Lorem ipsum consectetur. Vesguinha encantadora que vai pra todo lado menos onde você quer.' }
+    { nome: 'Salem', texto: 'Salem, o gato vindo direto dos infernos, é um filhote que pula pra longe toda vez que você se aproxima' },
+    { nome: 'Fifi', texto: 'Esse gato vesguinho nunca consegue andar em linha reta' }
   ],
   3: [
-    { nome: 'Miau', texto: 'Lorem ipsum adipiscing elit. A gorda do pedaço — precisa de um empurrãozinho.' },
-    { nome: 'Fofinho', texto: 'Lorem ipsum sit amet. Bravinho mas carinhoso, fica girando em volta de você.' }
+    { nome: 'Miau', texto: 'Mais churu na barriga que neurônio no cérebro, você vai precisar dar um empurrãozinho' },
+    { nome: 'Fofinho', texto: 'Bravinho mas carinhoso, fica girando em volta de você' }
   ]
 };
 
-const CLASSES_FASE = [null, Fase1, Fase2, Fase3, Fase4, Fase5, Fase6, Fase7, Fase8];
+const CLASSES_FASE = [null, Fase1, Fase2, Fase3, Fase4, Fase5];
 
 class IntroFase extends Cena {
   constructor(numero) {
     super();
     this.numero = numero;
-    this.gatosNovos = GATOS_NOVOS[numero] || [];
+    this.gatosNovos = GATOS_NOVOS[numero];
   }
 
   display() {
@@ -33,10 +33,10 @@ class IntroFase extends Cena {
       textSize(20);
       text('Gatos novos nesta fase:', LARGURA / 2, 130);
 
-      const startX = LARGURA / 2 - (this.gatosNovos.length - 1) * 160;
+      const inicioX = (LARGURA / 2) - ((this.gatosNovos.length - 1) * 160);
       for (let i = 0; i < this.gatosNovos.length; i++) {
         const gato = this.gatosNovos[i];
-        const centroX = startX + i * 320;
+        const centroX = inicioX + i * 320;
 
         fill(200);
         noStroke();
@@ -48,17 +48,16 @@ class IntroFase extends Cena {
         text(gato.nome, centroX, 268);
 
         textSize(12);
-        const linhas = gato.texto.split(' ');
+        const palavras = gato.texto.split(' ');
         let linha = '';
         let textoY = 292;
-        for (let j = 0; j < linhas.length; j++) {
-          const tentativa = linha + linhas[j] + ' ';
-          if (textWidth(tentativa) > 280 && linha !== '') {
+        for (let j = 0; j < palavras.length; j++) {
+          if (textWidth(linha + palavras[j] + ' ') > 280 && linha !== '') {
             text(linha.trim(), centroX, textoY);
-            linha = linhas[j] + ' ';
+            linha = palavras[j] + ' ';
             textoY += 18;
           } else {
-            linha = tentativa;
+            linha += palavras[j] + ' ';
           }
         }
         if (linha.trim() !== '') text(linha.trim(), centroX, textoY);

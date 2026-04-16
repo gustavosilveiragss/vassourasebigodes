@@ -8,7 +8,7 @@ class Inicio extends Cena {
     text('Vassouras & Bigodes', LARGURA / 2, 220);
 
     textSize(20);
-    text('Empurre os gatos para a zona de descanso!', LARGURA / 2, 290);
+    text('Para limpar a casa, leve os gatos ao sofá', LARGURA / 2, 290);
 
     textSize(16);
     fill(color(CORES.texto + '99'));

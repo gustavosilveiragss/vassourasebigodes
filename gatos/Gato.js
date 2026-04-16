@@ -1,17 +1,16 @@
 class Gato {
   constructor(x, y, raio, cor, nome) {
-    this.pos = createVector(x, y);
-    this.vel = createVector(0, 0);
+    this.posicao = createVector(x, y);
+    this.velocidade = createVector(0, 0);
     this.raio = raio;
     this.cor = cor;
     this.nome = nome;
     this.sprite = null;
     this.som = null;
     this.atraido = false;
-    this.preso = false;
-    this.alvoPos = null;
+    this.sentado = false;
+    this.posicaoAlvo = null;
     this.stun = 0;
-    this.resistencia = 1.0;
     this.friccao = 0.82;
   }
 
@@ -20,37 +19,37 @@ class Gato {
       this.stun--;
     }
 
-    let minhaBolinha = null;
+    let bolinhaAlvo = null;
     for (let bolinha of bolinhas) {
       if (bolinha.gatoAtraido === this) {
-        minhaBolinha = bolinha;
+        bolinhaAlvo = bolinha;
         break;
       }
     }
 
-    if (this.preso) {
-      if (minhaBolinha) {
-        this.preso = false;
+    if (this.sentado) {
+      if (bolinhaAlvo) {
+        this.sentado = false;
       } else {
-        this.pos.x += (this.alvoPos.x - this.pos.x) * 0.15;
-        this.pos.y += (this.alvoPos.y - this.pos.y) * 0.15;
-        this.vel.set(0, 0);
+        this.posicao.x += (this.posicaoAlvo.x - this.posicao.x) * 0.15;
+        this.posicao.y += (this.posicaoAlvo.y - this.posicao.y) * 0.15;
+        this.velocidade.set(0, 0);
         return;
       }
     }
 
-    if (minhaBolinha) {
-      const dir = p5.Vector.sub(minhaBolinha.pos, this.pos);
-      dir.normalize();
-      this.vel.add(p5.Vector.mult(dir, VEL.normal * 1.5));
+    if (bolinhaAlvo) {
+      const direcao = p5.Vector.sub(bolinhaAlvo.posicao, this.posicao);
+      direcao.normalize();
+      this.velocidade.add(p5.Vector.mult(direcao, VELOCIDADES.normal * 1.5));
     } else if (this.stun === 0) {
       this.mover();
     }
 
-    this.vel.mult(this.friccao);
-    this.pos.add(this.vel);
-    this.pos.x = constrain(this.pos.x, this.raio, LARGURA - this.raio);
-    this.pos.y = constrain(this.pos.y, this.raio, ALTURA - this.raio);
+    this.velocidade.mult(this.friccao);
+    this.posicao.add(this.velocidade);
+    this.posicao.x = constrain(this.posicao.x, this.raio, LARGURA - this.raio);
+    this.posicao.y = constrain(this.posicao.y, this.raio, ALTURA - this.raio);
 
     for (let obstaculo of obstaculos) {
       obstaculo.resolverColisao(this);
@@ -59,33 +58,37 @@ class Gato {
 
   mover() {}
 
-  empurrar(dir, forca) {
-    this.vel.add(p5.Vector.mult(dir, forca));
+  empurrar(direcao, forca) {
+    this.velocidade.add(p5.Vector.mult(direcao, forca));
+  }
+
+  empurrarVassoura(direcao, forca) {
+    this.empurrar(direcao, forca);
   }
 
   naSofa() {
     return (
-      this.pos.x > (SOFA.x + this.raio) &&
-      this.pos.x < (SOFA.x + SOFA.w - this.raio) &&
-      this.pos.y > (SOFA.y + this.raio) &&
-      this.pos.y < (SOFA.y + SOFA.h - this.raio)
+      this.posicao.x > (SOFA.x + this.raio) &&
+      this.posicao.x < (SOFA.x + SOFA.largura - this.raio) &&
+      this.posicao.y > (SOFA.y + this.raio) &&
+      this.posicao.y < (SOFA.y + SOFA.altura - this.raio)
     );
   }
 
   display() {
     if (this.sprite) {
       imageMode(CENTER);
-      image(this.sprite, this.pos.x, this.pos.y, this.raio * 2.2, this.raio * 2);
+      image(this.sprite, this.posicao.x, this.posicao.y, this.raio * 2.2, this.raio * 2);
     } else {
       fill(this.cor);
       noStroke();
-      ellipse(this.pos.x, this.pos.y, this.raio * 2.2, this.raio * 2);
+      ellipse(this.posicao.x, this.posicao.y, this.raio * 2.2, this.raio * 2);
     }
 
     fill(CORES.texto);
     noStroke();
     textAlign(CENTER);
     textSize(12);
-    text(this.nome, this.pos.x, this.pos.y + this.raio + 14);
+    text(this.nome, this.posicao.x, this.posicao.y + this.raio + 14);
   }
 }

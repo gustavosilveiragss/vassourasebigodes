@@ -1,7 +1,7 @@
 const LARGURA = 900;
 const ALTURA = 600;
 
-const SOFA = { x: 300, y: 490, w: 300, h: 90 };
+const SOFA = { x: 300, y: 490, largura: 300, altura: 90 };
 
 const CORES = {
   fundo: '#F5EDD6',
@@ -18,7 +18,7 @@ const CORES = {
   texto: '#3D2B1F'
 };
 
-const VEL = {
+const VELOCIDADES = {
   normal: 1.8,
   rapido: 2.8,
   lento: 1.0,

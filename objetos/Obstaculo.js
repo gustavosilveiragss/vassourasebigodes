@@ -1,37 +1,37 @@
 class Obstaculo {
-  constructor(x, y, w, h) {
+  constructor(x, y, largura, altura) {
     this.x = x;
     this.y = y;
-    this.w = w;
-    this.h = h;
+    this.largura = largura;
+    this.altura = altura;
   }
 
-  resolverColisao(obj) {
-    const proximoX = constrain(obj.pos.x, this.x, this.x + this.w);
-    const proximoY = constrain(obj.pos.y, this.y, this.y + this.h);
-    const distancia = dist(obj.pos.x, obj.pos.y, proximoX, proximoY);
+  resolverColisao(objeto) {
+    const proximoX = constrain(objeto.posicao.x, this.x, this.x + this.largura);
+    const proximoY = constrain(objeto.posicao.y, this.y, this.y + this.altura);
+    const distancia = dist(objeto.posicao.x, objeto.posicao.y, proximoX, proximoY);
 
-    if (distancia < obj.raio) {
+    if (distancia < objeto.raio) {
       if (distancia === 0) {
-        obj.pos.x = this.x - obj.raio - 1;
-        obj.vel.set(0, 0);
+        objeto.posicao.x = this.x - objeto.raio - 1;
+        objeto.velocidade.set(0, 0);
         return;
       }
-      const dir = createVector(obj.pos.x - proximoX, obj.pos.y - proximoY);
-      dir.normalize();
-      obj.pos.x = proximoX + dir.x * (obj.raio + 1);
-      obj.pos.y = proximoY + dir.y * (obj.raio + 1);
+      const direcao = createVector(objeto.posicao.x - proximoX, objeto.posicao.y - proximoY);
+      direcao.normalize();
+      objeto.posicao.x = proximoX + direcao.x * (objeto.raio + 1);
+      objeto.posicao.y = proximoY + direcao.y * (objeto.raio + 1);
 
-      const projecao = obj.vel.dot(dir);
-      obj.vel.x -= 2 * projecao * dir.x;
-      obj.vel.y -= 2 * projecao * dir.y;
-      obj.vel.mult(0.5);
+      const projecao = objeto.velocidade.dot(direcao);
+      objeto.velocidade.x -= 2 * projecao * direcao.x;
+      objeto.velocidade.y -= 2 * projecao * direcao.y;
+      objeto.velocidade.mult(0.5);
     }
   }
 
   display() {
     fill(CORES.obstaculo);
     noStroke();
-    rect(this.x, this.y, this.w, this.h, 8);
+    rect(this.x, this.y, this.largura, this.altura, 8);
   }
 }

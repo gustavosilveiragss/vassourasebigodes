@@ -5,9 +5,9 @@ class Fase2 extends Fase {
       new Salem(700, 200),
       new Fifi(450, 100)
     ];
-    const obs = [
+    const obstaculos = [
       new Obstaculo(340, 340, 220, 28)
     ];
-    super(2, gatos, obs, [], 80);
+    super(2, gatos, obstaculos, [], 80);
   }
 }

@@ -7,12 +7,12 @@ class Fase5 extends Fase {
       new Miau(200, 320),
       new Fofinho(680, 280)
     ];
-    const obs = [
+    const obstaculos = [
       new Obstaculo(350, 200, 200, 28),
       new Obstaculo(120, 380, 130, 28),
       new Obstaculo(650, 380, 130, 28)
     ];
     const bolinhas = [new Bolinha(450, 250, gatos)];
-    super(5, gatos, obs, bolinhas, 120);
+    super(5, gatos, obstaculos, bolinhas, 120);
   }
 }

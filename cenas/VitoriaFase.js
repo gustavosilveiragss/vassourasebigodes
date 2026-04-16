@@ -1,7 +1,7 @@
 class VitoriaFase extends Cena {
-  constructor(proxFase) {
+  constructor(proximaFase) {
     super();
-    this.proxFase = proxFase;
+    this.proximaFase = proximaFase;
   }
 
   display() {
@@ -13,19 +13,19 @@ class VitoriaFase extends Cena {
     text('Fase concluída!', LARGURA / 2, 220);
 
     textSize(16);
-    if (this.proxFase > 8) {
+    if (this.proximaFase > 8) {
       text('Você varreu a casa inteira com sucesso!', LARGURA / 2, 310);
       text('Clique para voltar ao início', LARGURA / 2, 370);
     } else {
-      text('Clique para a Fase ' + this.proxFase, LARGURA / 2, 330);
+      text('Clique para a Fase ' + this.proximaFase, LARGURA / 2, 330);
     }
   }
 
   aoClicar() {
-    if (this.proxFase > 8) {
+    if (this.proximaFase > 8) {
       trocarCena(new Inicio());
     } else {
-      trocarCena(new IntroFase(this.proxFase));
+      trocarCena(new IntroFase(this.proximaFase));
     }
   }
 }

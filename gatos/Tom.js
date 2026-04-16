@@ -4,10 +4,11 @@ class Tom extends Gato {
   }
 
   mover() {
-    const distancia = dist(cursorX, cursorY, this.pos.x, this.pos.y);
+    const distancia = dist(cursorX, cursorY, this.posicao.x, this.posicao.y);
     if (distancia < 70) return;
-    const dir = createVector(cursorX - this.pos.x, cursorY - this.pos.y);
-    dir.normalize();
-    this.vel.add(p5.Vector.mult(dir, VEL.normal));
+
+    const direcao = createVector(cursorX - this.posicao.x, cursorY - this.posicao.y);
+    direcao.normalize();
+    this.velocidade.add(p5.Vector.mult(direcao, VELOCIDADES.normal));
   }
 }
