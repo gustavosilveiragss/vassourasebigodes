@@ -11,6 +11,6 @@ class Fase3 extends Fase {
       new Obstaculo(110, 290, 120, 28),
       new Obstaculo(670, 270, 120, 28)
     ];
-    super(3, gatos, obstaculos, [], 100);
+    super(3, gatos, obstaculos, [], 40);
   }
 }

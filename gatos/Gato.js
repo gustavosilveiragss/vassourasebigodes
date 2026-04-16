@@ -6,19 +6,12 @@ class Gato {
     this.cor = cor;
     this.nome = nome;
     this.sprite = null;
-    this.som = null;
-    this.atraido = false;
     this.sentado = false;
     this.posicaoAlvo = null;
-    this.stun = 0;
     this.friccao = 0.82;
   }
 
   update(bolinhas, obstaculos) {
-    if (this.stun > 0) {
-      this.stun--;
-    }
-
     let bolinhaAlvo = null;
     for (let bolinha of bolinhas) {
       if (bolinha.gatoAtraido === this) {
@@ -42,7 +35,7 @@ class Gato {
       const direcao = p5.Vector.sub(bolinhaAlvo.posicao, this.posicao);
       direcao.normalize();
       this.velocidade.add(p5.Vector.mult(direcao, VELOCIDADES.normal * 1.5));
-    } else if (this.stun === 0) {
+    } else {
       this.mover();
     }
 
@@ -62,11 +55,7 @@ class Gato {
     this.velocidade.add(p5.Vector.mult(direcao, forca));
   }
 
-  empurrarVassoura(direcao, forca) {
-    this.empurrar(direcao, forca);
-  }
-
-  naSofa() {
+  noSofa = () => {
     return (
       this.posicao.x > (SOFA.x + this.raio) &&
       this.posicao.x < (SOFA.x + SOFA.largura - this.raio) &&

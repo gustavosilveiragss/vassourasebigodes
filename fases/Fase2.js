@@ -8,6 +8,6 @@ class Fase2 extends Fase {
     const obstaculos = [
       new Obstaculo(340, 340, 220, 28)
     ];
-    super(2, gatos, obstaculos, [], 80);
+    super(2, gatos, obstaculos, [], 30);
   }
 }

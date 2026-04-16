@@ -5,7 +5,7 @@ class Salem extends Gato {
     this.friccao = 0.5;
   }
 
-  empurrarVassoura(direcao, forca) {}
+  empurrar(direcao, forca) {}
 
   mover() {
     if (this.cooldown > 0) {
@@ -14,11 +14,11 @@ class Salem extends Gato {
     }
 
     const distancia = dist(cursorX, cursorY, this.posicao.x, this.posicao.y);
-    if (distancia < 120) {
+    if (distancia < 150) {
       const direcao = createVector(this.posicao.x - cursorX, this.posicao.y - cursorY);
       direcao.normalize();
       this.velocidade.set(direcao.x * 100, direcao.y * 100);
-      this.cooldown = 45;
+      this.cooldown = 30;
     }
   }
 }

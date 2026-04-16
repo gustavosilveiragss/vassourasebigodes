@@ -8,7 +8,6 @@ class Fase extends Cena {
     this.timer = tempoSegundos * 60;
     this.slotsOcupados = new Array(5).fill(null);
     this.vassoura = new Vassoura();
-    this.tutorialFrames = 0;
   }
 
   update() {
@@ -34,17 +33,13 @@ class Fase extends Cena {
         const gatoA = this.gatos[i];
         const gatoB = this.gatos[j];
         if (gatoA.sentado || gatoB.sentado) continue;
-        const distancia = dist(gatoA.posicao.x, gatoA.posicao.y, gatoB.posicao.x, gatoB.posicao.y);
-        const distanciaMinima = gatoA.raio + gatoB.raio;
-        if (distancia < distanciaMinima && distancia > 0) {
-          const normalX = (gatoB.posicao.x - gatoA.posicao.x) / distancia;
-          const normalY = (gatoB.posicao.y - gatoA.posicao.y) / distancia;
-          const sobreposicao = distanciaMinima - distancia;
-          const metadeSobreposicao = sobreposicao * 0.5;
-          gatoA.posicao.x -= normalX * metadeSobreposicao;
-          gatoA.posicao.y -= normalY * metadeSobreposicao;
-          gatoB.posicao.x += normalX * metadeSobreposicao;
-          gatoB.posicao.y += normalY * metadeSobreposicao;
+        const delta = p5.Vector.sub(gatoB.posicao, gatoA.posicao);
+        const distancia = delta.mag();
+        const minimo = gatoA.raio + gatoB.raio;
+        if (distancia < minimo && distancia > 0) {
+          delta.setMag((minimo - distancia) * 0.5);
+          gatoA.posicao.sub(delta);
+          gatoB.posicao.add(delta);
         }
       }
     }
@@ -56,7 +51,14 @@ class Fase extends Cena {
     }
 
     for (let gato of this.gatos) {
-      if (gato.naSofa() && !gato.sentado && !gato.atraido) {
+      let alvoDeBolinha = false;
+      for (let bolinha of this.bolinhas) {
+        if (bolinha.gatoAtraido === gato) {
+          alvoDeBolinha = true;
+          break;
+        }
+      }
+      if (gato.noSofa() && !gato.sentado && !alvoDeBolinha) {
         for (let i = 0; i < this.slotsOcupados.length; i++) {
           if (!this.slotsOcupados[i]) {
             this.slotsOcupados[i] = gato;
@@ -77,10 +79,6 @@ class Fase extends Cena {
     }
     if (todosSentados) {
       trocarCena(new VitoriaFase(this.numero + 1));
-    }
-
-    if (this.numero === 1) {
-      this.tutorialFrames++;
     }
   }
 

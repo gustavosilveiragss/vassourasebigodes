@@ -5,7 +5,7 @@ class Bolinha {
     this.raio = RAIOS.bolinha;
     this.gatos = gatos;
     this.gatoAtraido = null;
-    this.timer = 60;
+    this.timer = -360;
     this.timerPerseguicao = 0;
   }
 
@@ -15,17 +15,11 @@ class Bolinha {
       const distancia = dist(this.posicao.x, this.posicao.y, this.gatoAtraido.posicao.x, this.gatoAtraido.posicao.y);
 
       if (distancia < this.raio + this.gatoAtraido.raio) {
-        this.gatoAtraido.atraido = false;
-        this.gatoAtraido = null;
-        this.timerPerseguicao = 0;
         const angulo = random(TWO_PI);
         this.velocidade = createVector(cos(angulo) * 5, sin(angulo) * 5);
-        this.timer = -180;
-      } else if (this.timerPerseguicao > 600) {
-        this.gatoAtraido.atraido = false;
-        this.gatoAtraido = null;
-        this.timerPerseguicao = 0;
-        this.timer = -120;
+        this.liberarGato();
+      } else if (this.timerPerseguicao > 300) {
+        this.liberarGato();
       }
     }
 
@@ -54,20 +48,22 @@ class Bolinha {
     }
   }
 
-  selecionarGato() {
+  liberarGato() {
+    this.gatoAtraido = null;
+    this.timerPerseguicao = 0;
+    this.timer = -360;
+  }
+
+  selecionarGato = () => {
     if (this.gatos.length === 0) return;
     const gato = this.gatos[floor(random(this.gatos.length))];
-    gato.atraido = true;
     this.gatoAtraido = gato;
     this.timer = 0;
     this.timerPerseguicao = 0;
   }
 
   display() {
-    fill(0, 0, 0, 30);
     noStroke();
-    ellipse(this.posicao.x + 4, this.posicao.y + 4, this.raio * 2, this.raio * 2);
-
     fill(CORES.bolinha);
     ellipse(this.posicao.x, this.posicao.y, this.raio * 2, this.raio * 2);
   }

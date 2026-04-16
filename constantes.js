@@ -20,9 +20,7 @@ const CORES = {
 
 const VELOCIDADES = {
   normal: 1.8,
-  rapido: 2.8,
-  lento: 1.0,
-  muitoRapido: 3.5
+  lento: 0.8
 };
 
 const RAIOS = {

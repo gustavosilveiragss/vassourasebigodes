@@ -13,7 +13,7 @@ class VitoriaFase extends Cena {
     text('Fase concluída!', LARGURA / 2, 220);
 
     textSize(16);
-    if (this.proximaFase > 8) {
+    if (this.proximaFase > CLASSES_FASE.length - 1) {
       text('Você varreu a casa inteira com sucesso!', LARGURA / 2, 310);
       text('Clique para voltar ao início', LARGURA / 2, 370);
     } else {
@@ -22,7 +22,7 @@ class VitoriaFase extends Cena {
   }
 
   aoClicar() {
-    if (this.proximaFase > 8) {
+    if (this.proximaFase > CLASSES_FASE.length - 1) {
       trocarCena(new Inicio());
     } else {
       trocarCena(new IntroFase(this.proximaFase));

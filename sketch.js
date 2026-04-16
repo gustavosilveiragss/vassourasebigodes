@@ -2,9 +2,9 @@ let cenaAtual;
 let cursorX;
 let cursorY;
 
-function trocarCena(novaCena) {
+const trocarCena = (novaCena) => {
   cenaAtual = novaCena;
-}
+};
 
 function setup() {
   createCanvas(LARGURA, ALTURA);

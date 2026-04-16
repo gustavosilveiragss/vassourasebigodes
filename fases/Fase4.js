@@ -11,6 +11,7 @@ class Fase4 extends Fase {
       new Obstaculo(270, 405, 110, 28),
       new Obstaculo(520, 405, 110, 28)
     ];
-    super(4, gatos, obstaculos, [], 110);
+    const bolinhas = [new Bolinha(450, 240, gatos)];
+    super(4, gatos, obstaculos, bolinhas, 50);
   }
 }

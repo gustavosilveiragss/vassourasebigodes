@@ -29,7 +29,7 @@ class Obstaculo {
     }
   }
 
-  display() {
+  display = () => {
     fill(CORES.obstaculo);
     noStroke();
     rect(this.x, this.y, this.largura, this.altura, 8);
