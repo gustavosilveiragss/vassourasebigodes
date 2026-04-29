@@ -1,20 +1,30 @@
 class Fase4 extends Fase {
   constructor() {
     const gatos = [
-      new Tom(160, 130),
-      new Salem(740, 130),
-      new Fifi(450, 90),
-      new Miau(250, 350),
-      new Fofinho(650, 300)
+      new Tom(130, 130),
+      new Miau(770, 130),
+      new Salem(450, 100),
+      new Fofinho(300, 380),
+      new Fofinho(600, 380)
     ];
 
     const obstaculos = [
-      new Obstaculo(270, 405, 110, 28),
-      new Obstaculo(520, 405, 110, 28)
+      new Obstaculo(60, 180, 160, 20),
+      new Obstaculo(60, 60, 20, 140),
+      new Obstaculo(200, 60, 20, 140),
+
+      new Obstaculo(680, 180, 160, 20),
+      new Obstaculo(680, 60, 20, 140),
+      new Obstaculo(820, 60, 20, 140),
+
+
+      new Obstaculo(340, 260, 220, 20), 
+
+      new Obstaculo(140, 320, 160, 20),
+
+      new Obstaculo(600, 300, 160, 20)
     ];
 
-    const bolinhas = [new Bolinha(450, 240, gatos)];
-    
-    super(4, gatos, obstaculos, bolinhas, 50);
+    super(4, gatos, obstaculos, 60, 10, SOFA_GRANDE);
   }
 }

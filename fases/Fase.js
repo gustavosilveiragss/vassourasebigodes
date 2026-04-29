@@ -1,14 +1,28 @@
+// classe base de toda fase. timer + gatos + obstaculos + sofa
 class Fase extends Cena {
-  constructor(numero, gatos, obstaculos, bolinhas, tempoSegundos) {
+  /**
+   * @param {number} numero
+   * @param {Gato[]} gatos
+   * @param {Obstaculo[]} obstaculos
+   * @param {number} tempoSegundos
+   * @param {number} tempoEscapeSegundos
+   * @param {{x:number, y:number, largura:number, altura:number}} [sofa]
+   */
+  constructor(numero, gatos, obstaculos, tempoSegundos, tempoEscapeSegundos, sofa) {
     super();
     this.numero = numero;
     this.gatos = gatos;
     this.obstaculos = obstaculos;
-    this.bolinhas = bolinhas;
+
+    // p5 roda 60fps. converte segundos em frames
     this.timer = tempoSegundos * 60;
-    this.slotsOcupados = new Array(5).fill(null);
+    this.tempoEscape = tempoEscapeSegundos * 60;
+
+    this.sofa = sofa || SOFA;
+    this.slotsOcupados = new Array(SLOTS.length).fill(null); // qual instancia de gato ta em qual slot
     this.vassoura = new Vassoura();
   }
+
 
   update() {
     this.timer--;
@@ -18,69 +32,67 @@ class Fase extends Cena {
       return;
     }
 
-    this.vassoura.update(this.gatos);
-
-    for (let bolinha of this.bolinhas) {
-      bolinha.update(this.obstaculos);
-    }
-
+    // atualiza cada gato (timer de fuga + movimento/colisao)
     for (let i = 0; i < this.gatos.length; i++) {
-      this.gatos[i].update(this.bolinhas, this.obstaculos);
-    }
+      let gato = this.gatos[i];
 
-    for (let i = 0; i < this.gatos.length; i++) {
-      for (let j = i + 1; j < this.gatos.length; j++) {
-        const gatoA = this.gatos[i];
-        const gatoB = this.gatos[j];
-        if (gatoA.sentado || gatoB.sentado) continue;
-        const delta = p5.Vector.sub(gatoB.posicao, gatoA.posicao);
-        const distancia = delta.mag();
-        const minimo = gatoA.raio + gatoB.raio;
-        if (distancia < minimo && distancia > 0) {
-          delta.setMag((minimo - distancia) * 0.5);
-          gatoA.posicao.sub(delta);
-          gatoB.posicao.add(delta);
-        }
-      }
-    }
+      if (gato.sentado) {
+        gato.timerSentado--;
 
-    for (let i = 0; i < this.slotsOcupados.length; i++) {
-      if (this.slotsOcupados[i] && !this.slotsOcupados[i].sentado) {
-        this.slotsOcupados[i] = null;
-      }
-    }
-
-    for (let gato of this.gatos) {
-      let alvoDeBolinha = false;
-      for (let bolinha of this.bolinhas) {
-        if (bolinha.gatoAtraido === gato) {
-          alvoDeBolinha = true;
-          break;
+        if (gato.timerSentado <= 0) {
+          this.fazerEscapar(gato);
         }
       }
 
-      if (gato.noSofa() && !gato.sentado && !alvoDeBolinha) {
-        for (let i = 0; i < this.slotsOcupados.length; i++) {
-          if (!this.slotsOcupados[i]) {
-            this.slotsOcupados[i] = gato;
+      gato.atualizar(this.obstaculos);
+    }
+
+    this.vassoura.atualizar(this.gatos); // colisao do cursor
+
+    // checa quem chegou no sofa e ainda n sentou
+    for (let i = 0; i < this.gatos.length; i++) {
+      let gato = this.gatos[i];
+
+      if (gato.noSofa(this.sofa) && !gato.sentado) {
+        for (let j = 0; j < this.slotsOcupados.length; j++) {
+          if (!this.slotsOcupados[j]) {
+            this.slotsOcupados[j] = gato;
             gato.sentado = true;
-            gato.posicaoAlvo = SLOTS[i];
+            gato.slotX = SLOTS[j].x;
+            gato.slotY = SLOTS[j].y;
+            gato.timerSentado = this.tempoEscape;
             break;
           }
         }
       }
     }
 
+
     let todosSentados = true;
-    for (let gato of this.gatos) {
-      if (!gato.sentado) {
+    for (let i = 0; i < this.gatos.length; i++) {
+      if (!this.gatos[i].sentado) {
         todosSentados = false;
         break;
       }
     }
-    
+
     if (todosSentados) {
       trocarCena(new VitoriaFase(this.numero + 1));
+    }
+  }
+
+  // gato escapa do sofa: volta pra parte de cima da tela em posicao aleatoria
+  /** @param {Gato} gato */
+  fazerEscapar(gato) {
+    gato.sentado = false;
+    gato.x = random(100, LARGURA - 100);
+    gato.y = random(80, 300);
+
+    for (let j = 0; j < this.slotsOcupados.length; j++) {
+      if (this.slotsOcupados[j] === gato) {
+        this.slotsOcupados[j] = null;
+        break;
+      }
     }
   }
 
@@ -89,19 +101,17 @@ class Fase extends Cena {
 
     fill(CORES.sofa);
     noStroke();
-    rect(SOFA.x, SOFA.y, SOFA.largura, SOFA.altura, 16);
+    rect(this.sofa.x, this.sofa.y, this.sofa.largura, this.sofa.altura, 16);
 
     fill(CORES.texto);
     textAlign(CENTER);
     textSize(13);
-    text('sofá', SOFA.x + (SOFA.largura / 2), SOFA.y + (SOFA.altura / 2) + 5);
+    text('sofá', this.sofa.x + (this.sofa.largura / 2), this.sofa.y + 5 + (this.sofa.altura / 2));
 
-    for (let obstaculo of this.obstaculos) {
-      obstaculo.display();
-    }
 
-    for (let bolinha of this.bolinhas) {
-      bolinha.display();
+    // desenha tudo: obstaculos primeiro pq gatos passam por cima
+    for (let i = 0; i < this.obstaculos.length; i++) {
+      this.obstaculos[i].display();
     }
 
     for (let i = 0; i < this.gatos.length; i++) {
@@ -110,7 +120,8 @@ class Fase extends Cena {
 
     this.vassoura.display();
 
-    const segundosRestantes = ceil(this.timer / 60);
+    // hud: numero da fase + segundos restantes
+    let segundosRestantes = ceil(this.timer / 60);
     fill(CORES.texto);
     textAlign(LEFT);
     textSize(18);
@@ -119,7 +130,9 @@ class Fase extends Cena {
     text(segundosRestantes + 's', LARGURA - 16, 30);
   }
 
+  /** @param {number} tecla */
   aoApertarTecla(tecla) {
+    // P ou esc abre pausa
     if (tecla === 80 || tecla === 27) {
       trocarCena(new Pausa(this));
     }

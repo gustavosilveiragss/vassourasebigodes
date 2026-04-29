@@ -1,8 +1,10 @@
 class GameOver extends Cena {
+  /** @param {number} faseAtual */
   constructor(faseAtual) {
     super();
-    this.faseAtual = faseAtual;
+    this.faseAtual = faseAtual; // pra retentar a mesma fase
   }
+
 
   display() {
     background(CORES.fundo);
@@ -21,8 +23,9 @@ class GameOver extends Cena {
     trocarCena(new IntroFase(this.faseAtual));
   }
 
+  /** @param {number} tecla */
   aoApertarTecla(tecla) {
-    if (tecla === 77) {
+    if (tecla === 77) { // tecla M
       trocarCena(new Inicio());
     }
   }

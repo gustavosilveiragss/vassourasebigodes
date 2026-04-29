@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "esnext",
+    "checkJs": false,
+    "allowJs": true,
+    "lib": ["es2020", "dom"],
+    "types": ["p5/global"]
+  },
+  "include": ["**/*.js"],
+  "exclude": ["node_modules"]
+}

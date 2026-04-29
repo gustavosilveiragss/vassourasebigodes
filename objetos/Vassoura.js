@@ -1,28 +1,25 @@
+// a vassoura é o cursor. empurra os gatos quando encosta
 class Vassoura {
-  update(gatos) {
-    const cursorAnteriorX = constrain(pmouseX, 0, LARGURA - 1);
-    const cursorAnteriorY = constrain(pmouseY, 0, ALTURA - 1);
-    const dx = cursorX - cursorAnteriorX;
-    const dy = cursorY - cursorAnteriorY;
-    const velocidadeMouse = sqrt(dx * dx + dy * dy);
-
+  /** @param {Gato[]} gatos */
+  atualizar(gatos) {
     for (let i = 0; i < gatos.length; i++) {
-      const gato = gatos[i];
-      if (gato.sentado) continue;
+      let gato = gatos[i];
+\
+      if (gato.sentado || !gato.empurravel) {
+        continue;
+      }
 
-      const distancia = dist(cursorX, cursorY, gato.posicao.x, gato.posicao.y);
+      let distancia = dist(cursor.x, cursor.y, gato.x, gato.y);
       if (distancia < RAIOS.vassoura + gato.raio) {
-        const direcao = createVector(gato.posicao.x - cursorX, gato.posicao.y - cursorY);
-        direcao.normalize();
-        const forca = ((velocidadeMouse * 0.4) + 0.5) * gato.friccao;
-        gato.empurrar(direcao, forca);
+        gato.empurrarDoCursor(10);
       }
     }
   }
 
+
   display() {
     push();
-    translate(cursorX, cursorY);
+    translate(cursor.x, cursor.y);
     rotate(PI / 4);
     rectMode(CENTER);
     fill(CORES.vassoura);
