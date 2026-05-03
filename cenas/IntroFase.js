@@ -108,6 +108,15 @@ class IntroFase extends Cena {
       text('Boa sorte!', LARGURA / 2, 280);
     }
 
+    if (this.numero === 1) {
+      fill(CORES.texto);
+      textAlign(CENTER);
+      textSize(15);
+      text('Mova o mouse para controlar a vassoura', LARGURA / 2, 470);
+      text('Quanto mais rápido você move, mais forte ela empurra', LARGURA / 2, 495);
+      text('Pressione ESC para pausar', LARGURA / 2, 520);
+    }
+
     fill(color(CORES.texto + '99'));
     textAlign(CENTER);
     textSize(16);
