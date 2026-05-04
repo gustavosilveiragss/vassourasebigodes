@@ -14,7 +14,6 @@ class Pausa extends Cena {
     noStroke();
     rect(0, 0, LARGURA, ALTURA);
 
-
     fill(255);
     textAlign(CENTER);
     textSize(48);

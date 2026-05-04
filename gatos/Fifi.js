@@ -1,5 +1,14 @@
 // fifi vesgo foge da vassoura em burst rapido fazendo curva
 class Fifi extends Gato {
+  /** @type {string} */
+  static descricao = 'Esse gato vesguinho nunca consegue andar em linha reta';
+  /** @type {{frente: number, costas: number, direita: number, esquerda: number}} */
+  static frames = { frente: 1, costas: 3, direita: 1, esquerda: 1 };
+  static sombras = {
+    andando: { fracaoY: 1.13, fracaoLargura: 0.6 },
+    sentado: { fracaoY: 1.08, fracaoLargura: 0.55 },
+  };
+
   /**
    * @param {number} x
    * @param {number} y

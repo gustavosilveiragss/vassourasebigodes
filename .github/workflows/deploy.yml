@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [master]
+    branches: [master, dev]
   workflow_dispatch:
 
 permissions:
@@ -21,13 +21,23 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Checkout
+      - name: Checkout master
         uses: actions/checkout@v4
+        with:
+          ref: master
+
+      - name: Checkout dev into ./dev
+        uses: actions/checkout@v4
+        with:
+          ref: dev
+          path: dev
 
       - name: Cache bust scripts in index.html
         run: |
           sed -i -E 's#(<script src=")([^":]+\.js)(")#\1\2?v=${{ github.sha }}\3#g' index.html
+          sed -i -E 's#(<script src=")([^":]+\.js)(")#\1\2?v=${{ github.sha }}\3#g' dev/index.html
           grep '<script' index.html
+          grep '<script' dev/index.html
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

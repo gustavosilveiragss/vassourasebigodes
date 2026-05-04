@@ -7,7 +7,6 @@ class Inicio extends Cena {
     textSize(52);
     text('Vassouras & Bigodes', LARGURA / 2, 220);
 
-
     textSize(20);
     text('Para limpar a casa, leve os gatos ao sofá', LARGURA / 2, 290);
 
@@ -17,6 +16,6 @@ class Inicio extends Cena {
   }
 
   aoClicar() {
-    trocarCena(new IntroFase(1));
+    trocarCena(new IntroFase(FASE_INICIAL));
   }
 }

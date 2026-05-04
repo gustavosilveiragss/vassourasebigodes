@@ -2,9 +2,9 @@
 class Vassoura {
   /** @param {Gato[]} gatos */
   update(gatos) {
-    // calcula quanto o mouse andou no ultimo frame
-    const cursorAnteriorX = constrain(pmouseX, 0, LARGURA - 1);
-    const cursorAnteriorY = constrain(pmouseY, 0, ALTURA - 1);
+    // calcula quanto o mouse andou no ultimo frame, em coords logicas
+    const cursorAnteriorX = constrain(pmouseX / ESCALA, 0, LARGURA - 1);
+    const cursorAnteriorY = constrain(pmouseY / ESCALA, 0, ALTURA - 1);
     const dx = cursorX - cursorAnteriorX;
     const dy = cursorY - cursorAnteriorY;
     const velocidadeMouse = sqrt(dx * dx + dy * dy);
@@ -18,21 +18,20 @@ class Vassoura {
         // empurra no sentido oposto ao cursor
         const direcao = createVector(gato.posicao.x - cursorX, gato.posicao.y - cursorY);
         direcao.normalize();
-        const forca = ((velocidadeMouse * 0.4) + 0.5) * gato.friccao;
+        const forca = (velocidadeMouse * 0.4 + 0.5) * gato.friccao;
         gato.empurrar(direcao, forca);
       }
     }
   }
 
-
   display() {
-    push();
+    push(); // salva o estado de transformacoes e estilos
     translate(cursorX, cursorY);
     rotate(PI / 4);
     rectMode(CENTER);
     fill(CORES.vassoura);
     noStroke();
     rect(0, 0, 6, 38, 3);
-    pop();
+    pop(); // volta o estado pra n afetar o que vem depois
   }
 }

@@ -6,18 +6,19 @@ class Fase extends Cena {
    * @param {Obstaculo[]} obstaculos
    * @param {Bolinha[]} bolinhas
    * @param {number} tempoSegundos
+   * @param {{x:number, y:number, largura:number, altura:number}} [sofa]
    */
-  constructor(numero, gatos, obstaculos, bolinhas, tempoSegundos) {
+  constructor(numero, gatos, obstaculos, bolinhas, tempoSegundos, sofa) {
     super();
     this.numero = numero;
     this.gatos = gatos;
     this.obstaculos = obstaculos;
     this.bolinhas = bolinhas;
     this.timer = tempoSegundos * 60;
+    this.sofa = sofa || SOFA;
     this.slotsOcupados = new Array(5).fill(null); // qual instancia de gato ta em qual slot do sofa
     this.vassoura = new Vassoura();
   }
-
 
   update() {
     this.timer--;
@@ -74,7 +75,7 @@ class Fase extends Cena {
         }
       }
 
-      if (gato.noSofa() && !gato.sentado && !alvoDeBolinha) {
+      if (gato.noSofa(this.sofa) && !gato.sentado && !alvoDeBolinha) {
         // pega o primeiro slot livre
         for (let i = 0; i < this.slotsOcupados.length; i++) {
           if (!this.slotsOcupados[i]) {
@@ -87,7 +88,6 @@ class Fase extends Cena {
       }
     }
 
-
     let todosSentados = true;
     for (let gato of this.gatos) {
       if (!gato.sentado) {
@@ -97,7 +97,7 @@ class Fase extends Cena {
     }
 
     if (todosSentados) {
-      trocarCena(new VitoriaFase(this.numero + 1));
+      trocarCena(new VitoriaFase(this.numero, this.timer));
     }
   }
 
@@ -106,13 +106,12 @@ class Fase extends Cena {
 
     fill(CORES.sofa);
     noStroke();
-    rect(SOFA.x, SOFA.y, SOFA.largura, SOFA.altura, 16);
+    rect(this.sofa.x, this.sofa.y, this.sofa.largura, this.sofa.altura, 16);
 
     fill(CORES.texto);
     textAlign(CENTER);
     textSize(13);
-    text('sofá', SOFA.x + (SOFA.largura / 2), SOFA.y + (SOFA.altura / 2) + 5);
-
+    text('sofá', this.sofa.x + this.sofa.largura / 2, this.sofa.y + this.sofa.altura / 2 + 5);
 
     // desenha tudo: obstaculos primeiro pq gatos passam por cima
     for (let obstaculo of this.obstaculos) {

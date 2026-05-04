@@ -1,5 +1,15 @@
 // salem foge: pula longe se o cursor chega perto
 class Salem extends Gato {
+  /** @type {string} */
+  static descricao =
+    'Salem, o gato vindo direto dos infernos, é um filhote que pula pra longe toda vez que você se aproxima';
+  /** @type {{frente: number, costas: number, direita: number, esquerda: number}} */
+  static frames = { frente: 1, costas: 1, direita: 1, esquerda: 2 };
+  static sombras = {
+    andando: { fracaoY: 1.02, fracaoLargura: 0.55 },
+    sentado: { fracaoY: 0.95, fracaoLargura: 0.55 },
+  };
+
   /**
    * @param {number} x
    * @param {number} y
@@ -18,7 +28,6 @@ class Salem extends Gato {
       this.cooldown--;
       return;
     }
-
 
     const distancia = dist(cursorX, cursorY, this.posicao.x, this.posicao.y);
     if (distancia < 150) {

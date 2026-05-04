@@ -17,37 +17,77 @@ class Bolinha {
 
   /** @param {Obstaculo[]} obstaculos */
   update(obstaculos) {
-    // atraindo gato? espera ele encostar ou desistir
+    // atraindo gato muito tempo, desiste
     if (this.gatoAtraido !== null) {
       this.timerPerseguicao++;
-      const distancia = dist(this.posicao.x, this.posicao.y, this.gatoAtraido.posicao.x, this.gatoAtraido.posicao.y);
-
-      if (distancia < this.raio + this.gatoAtraido.raio) {
-        // gato encostou: bolinha vai em direcao aleatoria
-        const angulo = random(TWO_PI);
-        this.velocidade = createVector(cos(angulo) * 5, sin(angulo) * 5);
-        this.liberarGato();
-      } else if (this.timerPerseguicao > 300) {
-        // gato n veio em 5s desiste
+      if (this.timerPerseguicao > 300) {
         this.liberarGato();
       }
     }
 
-    this.velocidade.mult(0.97); // imitar friccao do chao
+    this.velocidade.mult(0.985); // friccao baixa pra ficar slippery
     this.posicao.add(this.velocidade);
 
-    // quica nas "paredes"
+    // quica nas paredes, perde um pouco no impacto
     if (this.posicao.x < this.raio || this.posicao.x > LARGURA - this.raio) {
-      this.velocidade.x *= -1;
+      this.velocidade.x *= -0.92;
       this.posicao.x = constrain(this.posicao.x, this.raio, LARGURA - this.raio);
     }
     if (this.posicao.y < this.raio || this.posicao.y > ALTURA - this.raio) {
-      this.velocidade.y *= -1;
+      this.velocidade.y *= -0.92;
       this.posicao.y = constrain(this.posicao.y, this.raio, ALTURA - this.raio);
     }
 
     for (let obstaculo of obstaculos) {
       obstaculo.resolverColisao(this);
+    }
+
+    // colisao com cada gato: empurra fora e quica
+    for (const gato of this.gatos) {
+      const deltaX = this.posicao.x - gato.posicao.x;
+      const deltaY = this.posicao.y - gato.posicao.y;
+      const distancia = sqrt(deltaX * deltaX + deltaY * deltaY);
+      const distanciaMinima = this.raio + gato.raio;
+      if (distancia < distanciaMinima && distancia > 0) {
+        const normalX = deltaX / distancia;
+        const normalY = deltaY / distancia;
+        const sobreposicao = distanciaMinima - distancia;
+        this.posicao.x += normalX * sobreposicao;
+        this.posicao.y += normalY * sobreposicao;
+
+        if (gato === this.gatoAtraido) {
+          // gato atraido encostou, launch aleatorio
+          const angulo = random(TWO_PI);
+          this.velocidade = createVector(cos(angulo) * 5, sin(angulo) * 5);
+          this.liberarGato();
+        } else {
+          // reflete a velocidade pelo eixo da normal e perde energia
+          const projecao = this.velocidade.x * normalX + this.velocidade.y * normalY;
+          this.velocidade.x -= 2 * projecao * normalX;
+          this.velocidade.y -= 2 * projecao * normalY;
+          this.velocidade.mult(0.85);
+        }
+      }
+    }
+
+    // vassoura empurra com forca proporcional a velocidade do mouse
+    const distVassoura = dist(this.posicao.x, this.posicao.y, cursorX, cursorY);
+    const distMinVassoura = this.raio + RAIOS.vassoura;
+    if (distVassoura < distMinVassoura && distVassoura > 0) {
+      const normalX = (this.posicao.x - cursorX) / distVassoura;
+      const normalY = (this.posicao.y - cursorY) / distVassoura;
+      const sobreposicao = distMinVassoura - distVassoura;
+      this.posicao.x += normalX * sobreposicao;
+      this.posicao.y += normalY * sobreposicao;
+
+      const cursorAnteriorX = constrain(pmouseX / ESCALA, 0, LARGURA - 1);
+      const cursorAnteriorY = constrain(pmouseY / ESCALA, 0, ALTURA - 1);
+      const deltaCursorX = cursorX - cursorAnteriorX;
+      const deltaCursorY = cursorY - cursorAnteriorY;
+      const velocidadeMouse = sqrt(deltaCursorX * deltaCursorX + deltaCursorY * deltaCursorY);
+      const forca = velocidadeMouse * 0.6 + 1.5;
+      this.velocidade.x += normalX * forca;
+      this.velocidade.y += normalY * forca;
     }
 
     // sem gato atraido conta o cooldown e seleciona novo quando estiver parada
@@ -73,10 +113,12 @@ class Bolinha {
     this.gatoAtraido = gato;
     this.timer = 0;
     this.timerPerseguicao = 0;
-  }
+  };
 
   display() {
     noStroke();
+    fill(0, 60);
+    ellipse(this.posicao.x, this.posicao.y + this.raio * 1.1, this.raio * 1.6, this.raio * 0.5);
     fill(CORES.bolinha);
     ellipse(this.posicao.x, this.posicao.y, this.raio * 2, this.raio * 2);
   }

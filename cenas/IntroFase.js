@@ -1,23 +1,20 @@
-// gatos novos que aparecem em cada fase, mostrados na intro
+// classes dos gatos novos por fase. info (descricao, sombra) sai da propria classe
 const GATOS_NOVOS = {
-  1: [
-    { nome: 'Tom', texto: 'Esse gato é extremamente carente e vai na sua direção pra onde você for' }
-  ],
-  2: [
-    { nome: 'Salem', texto: 'Salem, o gato vindo direto dos infernos, é um filhote que pula pra longe toda vez que você se aproxima' },
-    { nome: 'Fifi', texto: 'Esse gato vesguinho nunca consegue andar em linha reta' }
-  ],
-  3: [
-    { nome: 'Miau', texto: 'Mais churu na barriga que neurônios no cérebro, você vai precisar dar um empurrãozinho' },
-    { nome: 'Fofinho', texto: 'Bravinho mas carinhoso, sai correndo atrás de você rapidamente' }
-  ]
+  1: [Tom],
+  2: [Salem, Fifi],
+  3: [Miau, Fofinho],
 };
 
 // outros desafios novos por fase (bolinha, etc)
 const DESAFIOS_NOVOS = {
   4: [
-    { nome: 'Bolinha', texto: 'Uma bolinha fica parada no chão, atrai um gato aleatório e depois quica pra outro canto. Vai bagunçar seus planos e introduzir caos generalizado', cor: CORES.bolinha }
-  ]
+    {
+      nome: 'Bolinha',
+      texto:
+        'Uma bolinha fica parada no chão, atrai um gato aleatório e depois quica pra outro canto. Vai bagunçar seus planos e introduzir caos generalizado',
+      cor: CORES.bolinha,
+    },
+  ],
 };
 
 const CLASSES_FASE = [Fase, Fase1, Fase2, Fase3, Fase4, Fase5];
@@ -51,22 +48,41 @@ class IntroFase extends Cena {
       text('Gatos novos nesta fase:', LARGURA / 2, y);
 
       // espalha os cards horizontalmente em volta do centro
-      const inicioX = (LARGURA / 2) - ((this.gatosNovos.length - 1) * 160);
-      for (let i = 0; i < this.gatosNovos.length; i++) {
-        const gato = this.gatosNovos[i];
-        const centroX = inicioX + i * 320;
+      const inicioX = LARGURA / 2 - (this.gatosNovos.length - 1) * 160;
+      for (let indiceCard = 0; indiceCard < this.gatosNovos.length; indiceCard++) {
+        const classeGato = this.gatosNovos[indiceCard];
+        const chaveSprite = classeGato.name.toLowerCase();
+        const centroX = inicioX + indiceCard * 320;
 
-        fill(200);
-        noStroke();
-        rect(centroX - 40, y + 20, 80, 80, 8); // placeholder do sprite
+        const grupoSprites = SPRITES[chaveSprite];
+        if (grupoSprites && grupoSprites.sentado) {
+          const sprite = grupoSprites.sentado;
+          const maiorLado = max(sprite.width, sprite.height);
+          const fatorEscala = 100 / maiorLado;
+          const larguraRender = sprite.width * fatorEscala;
+          const alturaRender = sprite.height * fatorEscala;
+          // sombra na base do corpo
+          noStroke();
+          fill(0, 60);
+          const sombraSentado = classeGato.sombras.sentado;
+          const larguraSombra = larguraRender * sombraSentado.fracaoLargura;
+          const sombraY = y + 65 + (alturaRender / 2) * sombraSentado.fracaoY;
+          ellipse(centroX, sombraY, larguraSombra, larguraSombra * 0.25);
+          desenharSpriteComOutline(sprite, centroX, y + 65, larguraRender, alturaRender);
+        } else {
+          fill(200);
+          noStroke();
+          rect(centroX - 40, y + 20, 80, 80, 8);
+        }
 
         fill(CORES.texto);
+        noStroke();
         textAlign(CENTER);
         textSize(18);
-        text(gato.nome, centroX, y + 123);
+        text(classeGato.name, centroX, y + 142);
 
         textSize(12);
-        this.desenharTextoQuebrado(gato.texto, centroX, y + 147, 280);
+        this.desenharTextoQuebrado(classeGato.descricao, centroX, y + 166, 280);
       }
 
       y += 210;
@@ -79,12 +95,14 @@ class IntroFase extends Cena {
       textSize(20);
       text('Novos desafios:', LARGURA / 2, y);
 
-      const inicioX = (LARGURA / 2) - ((this.desafiosNovos.length - 1) * 160);
+      const inicioX = LARGURA / 2 - (this.desafiosNovos.length - 1) * 160;
       for (let i = 0; i < this.desafiosNovos.length; i++) {
         const desafio = this.desafiosNovos[i];
         const centroX = inicioX + i * 320;
 
         noStroke();
+        fill(0, 60);
+        ellipse(centroX, y + 88, 40, 12);
         fill(desafio.cor);
         ellipse(centroX, y + 60, 50, 50);
 
