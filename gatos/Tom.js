@@ -1,6 +1,10 @@
 // tom segue o cursor (carente)
 class Tom extends Gato {
   /** @type {string} */
+  static cor = '#E8A87C';
+  /** @type {number} */
+  static velocidade = 1.8;
+  /** @type {string} */
   static descricao = 'Esse gato é extremamente carente e vai na sua direção pra onde você for';
   /** @type {{frente: number, costas: number, direita: number, esquerda: number}} */
   static frames = { frente: 3, costas: 1, direita: 2, esquerda: 2 };
@@ -9,12 +13,16 @@ class Tom extends Gato {
     sentado: { fracaoY: 0.85, fracaoLargura: 0.7 },
   };
 
+  static precarregar() {
+    Tom.somMiado = new Som(['gatos/tom_1.mp3', 'gatos/tom_2.mp3'], 180, 0.55);
+  }
+
   /**
    * @param {number} x
    * @param {number} y
    */
   constructor(x, y) {
-    super(x, y, RAIOS.gato, CORES.tom, 'Tom');
+    super(x, y, 'Tom');
   }
 
   mover() {
@@ -24,6 +32,6 @@ class Tom extends Gato {
     // acelera em direcao ao cursor
     const direcao = createVector(cursorX - this.posicao.x, cursorY - this.posicao.y);
     direcao.normalize();
-    this.velocidade.add(p5.Vector.mult(direcao, VELOCIDADES.normal));
+    this.velocidade.add(p5.Vector.mult(direcao, Tom.velocidade));
   }
 }

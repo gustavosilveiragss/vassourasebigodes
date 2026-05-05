@@ -10,6 +10,6 @@ class Fase2 extends Fase {
       new Obstaculo(630, 320, 140, 28),
     ];
 
-    super(2, gatos, obstaculos, [], 40, SOFA_GRANDE);
+    super(2, gatos, obstaculos, [], 40, Fase.SOFA_GRANDE);
   }
 }

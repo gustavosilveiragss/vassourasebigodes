@@ -1,6 +1,8 @@
 // salem foge: pula longe se o cursor chega perto
 class Salem extends Gato {
   /** @type {string} */
+  static cor = '#2D2D2D';
+  /** @type {string} */
   static descricao =
     'Salem, o gato vindo direto dos infernos, é um filhote que pula pra longe toda vez que você se aproxima';
   /** @type {{frente: number, costas: number, direita: number, esquerda: number}} */
@@ -10,12 +12,16 @@ class Salem extends Gato {
     sentado: { fracaoY: 0.95, fracaoLargura: 0.55 },
   };
 
+  static precarregar() {
+    Salem.somMiado = new Som(['gatos/salem_1.mp3', 'gatos/salem_2.mp3'], 180, 0.55);
+  }
+
   /**
    * @param {number} x
    * @param {number} y
    */
   constructor(x, y) {
-    super(x, y, RAIOS.gato, CORES.salem, 'Salem');
+    super(x, y, 'Salem');
     this.cooldown = 0; // tempo de descanso entre pulos
     this.friccao = 0.5; // freia rapido depois do pulo
   }
@@ -36,6 +42,7 @@ class Salem extends Gato {
       direcao.normalize();
       this.velocidade.set(direcao.x * 100, direcao.y * 100);
       this.cooldown = 30;
+      this.miar();
     }
   }
 }

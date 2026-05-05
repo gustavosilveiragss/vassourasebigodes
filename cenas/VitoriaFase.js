@@ -1,4 +1,4 @@
-// recorde guardado em frames pra ter precisao max
+// recorde guardado em frames pra ter precisao
 const CHAVE_RECORDES = 'vassourasBigodesRecordes';
 
 /**
@@ -24,6 +24,13 @@ function salvarRecorde(fase, frames) {
 }
 
 class VitoriaFase extends Cena {
+  /** @type {Som} */
+  static somVitoria;
+
+  static precarregar() {
+    VitoriaFase.somVitoria = new Som(['jogo/vitoria.mp3'], 0, 0.5);
+  }
+
   /**
    * @param {number} faseConcluida
    * @param {number} framesRestantes
@@ -43,12 +50,14 @@ class VitoriaFase extends Cena {
     if (this.novoRecorde) {
       salvarRecorde(faseConcluida, framesRestantes);
     }
+
+    VitoriaFase.somVitoria.tocar(true);
   }
 
   display() {
-    background(CORES.fundo);
+    background(Tema.fundo);
 
-    fill(CORES.texto);
+    fill(Tema.texto);
     textAlign(CENTER);
     textSize(36);
     text('Fase ' + this.faseConcluida + ' concluída!', LARGURA / 2, 130);
@@ -59,43 +68,45 @@ class VitoriaFase extends Cena {
     const segundos = ceil(this.framesRestantes / 60);
     const tempoTexto = segundos + 's';
     textSize(34);
-    fill(CORES.texto);
+    fill(Tema.texto);
     text(tempoTexto, LARGURA / 2, 245);
 
     if (this.novoRecorde && this.recordeAnterior === null) {
-      fill(CORES.vassoura);
+      fill(Vassoura.cor);
       textSize(22);
       text('Primeiro recorde!', LARGURA / 2, 320);
     } else if (this.novoRecorde) {
       const anteriorSeg = ceil(this.recordeAnterior / 60);
-      fill(CORES.vassoura);
+      fill(Vassoura.cor);
       textSize(22);
       text('Novo recorde!', LARGURA / 2, 315);
-      fill(color(CORES.texto + '99'));
+      fill(color(Tema.texto + '99'));
       textSize(14);
       text('recorde anterior: ' + anteriorSeg + 's', LARGURA / 2, 340);
     } else {
       const melhorSeg = ceil(this.recordeAnterior / 60);
-      fill(CORES.texto);
+      fill(Tema.texto);
       textSize(18);
       text('Melhor tempo: ' + melhorSeg + 's', LARGURA / 2, 320);
     }
 
-    fill(color(CORES.texto + '99'));
+    fill(color(Tema.texto + '99'));
     textSize(16);
     if (this.proximaFase > CLASSES_FASE.length - 1) {
       text('Você varreu a casa inteira com sucesso!', LARGURA / 2, 520);
       text('Clique para voltar ao início', LARGURA / 2, 550);
-    } else {
-      text('Clique para a Fase ' + this.proximaFase, LARGURA / 2, 540);
+      return;
     }
+
+    text('Clique para a Fase ' + this.proximaFase, LARGURA / 2, 540);
   }
 
   aoClicar() {
+    Cena.somClique.tocar();
     if (this.proximaFase > CLASSES_FASE.length - 1) {
       trocarCena(new Inicio());
-    } else {
-      trocarCena(new IntroFase(this.proximaFase));
+      return;
     }
+    trocarCena(new IntroFase(this.proximaFase));
   }
 }

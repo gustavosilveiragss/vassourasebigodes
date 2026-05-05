@@ -1,5 +1,9 @@
 // fofinho: tiro pra cima do cursor
 class Fofinho extends Gato {
+  /** @type {number} */
+  static raio = 16;
+  /** @type {string} */
+  static cor = '#6B8F71';
   /** @type {string} */
   static descricao = 'Bravinho mas carinhoso, sai correndo atrás de você rapidamente';
   /** @type {{frente: number, costas: number, direita: number, esquerda: number}} */
@@ -9,12 +13,16 @@ class Fofinho extends Gato {
     sentado: { fracaoY: 0.85, fracaoLargura: 0.85 },
   };
 
+  static precarregar() {
+    Fofinho.somMiado = new Som(['gatos/fofinho_1.mp3', 'gatos/fofinho_2.mp3'], 180, 0.55);
+  }
+
   /**
    * @param {number} x
    * @param {number} y
    */
   constructor(x, y) {
-    super(x, y, RAIOS.fofinho, CORES.fofinho, 'Fofinho');
+    super(x, y, 'Fofinho');
     this.cooldown = 90; // cooldown tiro
   }
 

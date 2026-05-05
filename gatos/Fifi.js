@@ -1,6 +1,10 @@
 // fifi vesgo foge da vassoura em burst rapido fazendo curva
 class Fifi extends Gato {
   /** @type {string} */
+  static cor = '#C4956A';
+  /** @type {number} */
+  static velocidade = 0.8;
+  /** @type {string} */
   static descricao = 'Esse gato vesguinho nunca consegue andar em linha reta';
   /** @type {{frente: number, costas: number, direita: number, esquerda: number}} */
   static frames = { frente: 1, costas: 3, direita: 1, esquerda: 1 };
@@ -9,12 +13,16 @@ class Fifi extends Gato {
     sentado: { fracaoY: 1.08, fracaoLargura: 0.55 },
   };
 
+  static precarregar() {
+    Fifi.somMiado = new Som(['gatos/fifi_1.mp3', 'gatos/fifi_2.mp3'], 180, 0.55);
+  }
+
   /**
    * @param {number} x
    * @param {number} y
    */
   constructor(x, y) {
-    super(x, y, RAIOS.gato, CORES.fifi, 'Fifi');
+    super(x, y, 'Fifi');
     this.frames = 0; // frames restantes do burst
     this.direcao = 0; // angulo atual da fuga em radianos
   }
@@ -35,7 +43,7 @@ class Fifi extends Gato {
       this.frames--;
       this.direcao += 0.05;
       const vetorDirecao = createVector(cos(this.direcao), sin(this.direcao));
-      this.velocidade.add(p5.Vector.mult(vetorDirecao, VELOCIDADES.lento));
+      this.velocidade.add(p5.Vector.mult(vetorDirecao, Fifi.velocidade));
     }
   }
 }

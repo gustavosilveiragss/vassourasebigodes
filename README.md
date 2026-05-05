@@ -29,12 +29,11 @@ A versão publicada no github pages está em https://vassourasebigodes.marmota.d
 
 ## Planos futuros
 
-Esta entrega corresponde ao estado atual da branch `master`. A branch `dev` contém funcionalidades em andamento, ainda não terminadas. As próximas etapas planejadas são:
+As próximas etapas planejadas são:
 
-- **Adaptação para vetores** migrando posição e velocidade dos gatos, da vassoura e dos obstáculos de coordenadas `x` e `y` separadas para `p5.Vector`. Isso simplifica cálculos de direção, distância, normalização e empurrão, que hoje são feitos com `if`s comparando eixos um a um. Já implementado na `dev`
-- **Mais gatos** Já existe na `dev` o quinto gato (Fifi) com movimentação própria
-- **Mais níveis** além dos cinco atuais, testando outras combinações de gatos e obstáculos. Ainda não iniciado
-- **Bolinha como distrator** substituindo o "sair sozinho do sofá" por uma bolinha que se move pelo cenário e atrai um gato por vez antes de quicar para outro lugar. Já implementada na `dev`, com seleção de gato, perseguição, timeout e colisão com obstáculos
-- **Sprites e animações** para os gatos, a vassoura e o cenário, substituindo os círculos coloridos atuais. Não iniciado
-- **Efeitos sonoros** (miados, batida da vassoura, bolinha quicando, vitória e derrota). Não iniciado
 - **GIFs demonstrativas** entre os níveis mostrando a movimentação de cada gato, para que o jogador entenda a mecânica antes de iniciar a fase
+- **Efeitos visuais** shake de câmera, particulas e transições para deixar mais responsivo
+
+## Créditos
+
+Música: [comfi beats](https://www.youtube.com/@comfibeats) (uso sem fins lucrativos permitido). SFX: [Kenney.nl](https://kenney.nl) e [Freesound.org](https://freesound.org).

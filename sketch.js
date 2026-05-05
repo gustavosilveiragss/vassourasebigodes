@@ -5,9 +5,9 @@ let cursorY;
 let SPRITES = {};
 
 /** @param {Cena} novaCena */
-const trocarCena = (novaCena) => {
+function trocarCena(novaCena) {
   cenaAtual = novaCena;
-};
+}
 
 /**
  * desenha sprite com outline preto grosso (mascara serrilhado)
@@ -34,6 +34,19 @@ function desenharSpriteComOutline(sprite, x, y, largura, altura) {
 
 const CLASSES_GATOS = [Tom, Salem, Fifi, Miau, Fofinho];
 
+// classes com som carregam aqui no preload
+const MODULOS_AUDIO = [
+  MusicaFundo,
+  Cena,
+  Vassoura,
+  Bolinha,
+  Fase,
+  VitoriaFase,
+  GameOver,
+  Pausa,
+  ...CLASSES_GATOS,
+];
+
 function preload() {
   for (const classeGato of CLASSES_GATOS) {
     const nome = classeGato.name.toLowerCase();
@@ -48,6 +61,10 @@ function preload() {
       }
     }
   }
+
+  // cada modulo de audio tem uma funcao de preload,
+  // que carrega os arquivos e prepara os objetos de som
+  for (const classe of MODULOS_AUDIO) classe.precarregar();
 }
 
 function setup() {

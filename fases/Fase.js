@@ -1,5 +1,30 @@
 // classe base de toda fase. timer + gatos + obstaculos + bolinhas + sofa
 class Fase extends Cena {
+  /** @type {Som} */
+  static somSentou;
+
+  /** @type {{x:number, y:number, largura:number, altura:number}} */
+  static SOFA_PADRAO = { x: 300, y: 490, largura: 300, altura: 90 };
+
+  /** @type {{x:number, y:number, largura:number, altura:number}} */
+  static SOFA_GRANDE = { x: 225, y: 450, largura: 450, altura: 130 };
+
+  /** @type {{x:number, y:number}[]} posicoes onde os gatos sentam no sofa */
+  static SLOTS = [
+    { x: 330, y: 525 },
+    { x: 390, y: 525 },
+    { x: 450, y: 525 },
+    { x: 510, y: 525 },
+    { x: 570, y: 525 },
+  ];
+
+  /** @type {string} */
+  static corSofa = 'rgba(168, 216, 168, 0.47)';
+
+  static precarregar() {
+    Fase.somSentou = new Som(['jogo/sentou_sofa.ogg'], 0, 0.7);
+  }
+
   /**
    * @param {number} numero
    * @param {Gato[]} gatos
@@ -15,7 +40,7 @@ class Fase extends Cena {
     this.obstaculos = obstaculos;
     this.bolinhas = bolinhas;
     this.timer = tempoSegundos * 60;
-    this.sofa = sofa || SOFA;
+    this.sofa = sofa || Fase.SOFA_PADRAO;
     this.slotsOcupados = new Array(5).fill(null); // qual instancia de gato ta em qual slot do sofa
     this.vassoura = new Vassoura();
   }
@@ -44,12 +69,15 @@ class Fase extends Cena {
       for (let j = i + 1; j < this.gatos.length; j++) {
         const gatoA = this.gatos[i];
         const gatoB = this.gatos[j];
+
         if (gatoA.sentado || gatoB.sentado) continue;
+
         const delta = p5.Vector.sub(gatoB.posicao, gatoA.posicao);
         const distancia = delta.mag();
         const minimo = gatoA.raio + gatoB.raio;
+
         if (distancia < minimo && distancia > 0) {
-          // empurra cada um pra metade da sobreposicao
+          // empurra cada um pra metade da sobreposicao, cada gato move metade da distancia que falta pra n se tocarem mais
           delta.setMag((minimo - distancia) * 0.5);
           gatoA.posicao.sub(delta);
           gatoB.posicao.add(delta);
@@ -81,7 +109,8 @@ class Fase extends Cena {
           if (!this.slotsOcupados[i]) {
             this.slotsOcupados[i] = gato;
             gato.sentado = true;
-            gato.posicaoAlvo = SLOTS[i];
+            gato.posicaoAlvo = Fase.SLOTS[i];
+            Fase.somSentou.tocar();
             break;
           }
         }
@@ -102,13 +131,13 @@ class Fase extends Cena {
   }
 
   display() {
-    background(CORES.fundo);
+    background(Tema.fundo);
 
-    fill(CORES.sofa);
+    fill(Fase.corSofa);
     noStroke();
     rect(this.sofa.x, this.sofa.y, this.sofa.largura, this.sofa.altura, 16);
 
-    fill(CORES.texto);
+    fill(Tema.texto);
     textAlign(CENTER);
     textSize(13);
     text('sofá', this.sofa.x + this.sofa.largura / 2, this.sofa.y + this.sofa.altura / 2 + 5);
@@ -130,7 +159,7 @@ class Fase extends Cena {
 
     // hud: numero da fase + segundos restantes
     const segundosRestantes = ceil(this.timer / 60);
-    fill(CORES.texto);
+    fill(Tema.texto);
     textAlign(LEFT);
     textSize(18);
     text('Fase ' + this.numero, 16, 30);

@@ -22,6 +22,6 @@ class Fase4 extends Fase {
 
     const bolinhas = [new Bolinha(450, 240, gatos)];
 
-    super(4, gatos, obstaculos, bolinhas, 45, SOFA_GRANDE);
+    super(4, gatos, obstaculos, bolinhas, 45, Fase.SOFA_GRANDE);
   }
 }

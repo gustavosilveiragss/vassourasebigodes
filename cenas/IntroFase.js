@@ -12,7 +12,7 @@ const DESAFIOS_NOVOS = {
       nome: 'Bolinha',
       texto:
         'Uma bolinha fica parada no chão, atrai um gato aleatório e depois quica pra outro canto. Vai bagunçar seus planos e introduzir caos generalizado',
-      cor: CORES.bolinha,
+      cor: Bolinha.cor,
     },
   ],
 };
@@ -20,18 +20,33 @@ const DESAFIOS_NOVOS = {
 const CLASSES_FASE = [Fase, Fase1, Fase2, Fase3, Fase4, Fase5];
 
 class IntroFase extends Cena {
-  /** @param {number} numero */
-  constructor(numero) {
+  /**
+   * @param {number} numero
+   * @param {boolean} [comFade]
+   */
+  constructor(numero, comFade = false) {
     super();
     this.numero = numero;
     this.gatosNovos = GATOS_NOVOS[numero];
     this.desafiosNovos = DESAFIOS_NOVOS[numero];
+    this.framesFade = comFade ? 60 : 0;
+    this.framesAtuais = 0;
+  }
+
+  update() {
+    if (this.framesAtuais < this.framesFade) {
+      this.framesAtuais++;
+    }
   }
 
   display() {
-    background(CORES.fundo);
+    background(Tema.fundo);
 
-    fill(CORES.texto);
+    // fade do conteudo, sem afetar o fundo
+    const alpha = this.framesFade === 0 ? 1 : this.framesAtuais / this.framesFade;
+    drawingContext.globalAlpha = alpha;
+
+    fill(Tema.texto);
     textAlign(CENTER);
     textSize(36);
     text('Fase ' + this.numero, LARGURA / 2, 70);
@@ -42,7 +57,7 @@ class IntroFase extends Cena {
     let y = 115;
 
     if (temGatos) {
-      fill(CORES.texto);
+      fill(Tema.texto);
       textAlign(CENTER);
       textSize(20);
       text('Gatos novos nesta fase:', LARGURA / 2, y);
@@ -61,7 +76,7 @@ class IntroFase extends Cena {
           const fatorEscala = 100 / maiorLado;
           const larguraRender = sprite.width * fatorEscala;
           const alturaRender = sprite.height * fatorEscala;
-          // sombra na base do corpo
+
           noStroke();
           fill(0, 60);
           const sombraSentado = classeGato.sombras.sentado;
@@ -75,7 +90,7 @@ class IntroFase extends Cena {
           rect(centroX - 40, y + 20, 80, 80, 8);
         }
 
-        fill(CORES.texto);
+        fill(Tema.texto);
         noStroke();
         textAlign(CENTER);
         textSize(18);
@@ -90,7 +105,7 @@ class IntroFase extends Cena {
 
     // bloco de desafios (bolinha etc)
     if (temDesafios) {
-      fill(CORES.texto);
+      fill(Tema.texto);
       textAlign(CENTER);
       textSize(20);
       text('Novos desafios:', LARGURA / 2, y);
@@ -106,7 +121,7 @@ class IntroFase extends Cena {
         fill(desafio.cor);
         ellipse(centroX, y + 60, 50, 50);
 
-        fill(CORES.texto);
+        fill(Tema.texto);
         textAlign(CENTER);
         textSize(18);
         text(desafio.nome, centroX, y + 110);
@@ -120,24 +135,26 @@ class IntroFase extends Cena {
 
     // fase sem novidade: mensagem padrao
     if (!temGatos && !temDesafios) {
-      fill(CORES.texto);
+      fill(Tema.texto);
       textAlign(CENTER);
       textSize(28);
       text('Boa sorte!', LARGURA / 2, 280);
     }
 
     if (this.numero === 1) {
-      fill(CORES.texto);
+      fill(Tema.texto);
       textAlign(CENTER);
       textSize(15);
       text('Mova o mouse para controlar a vassoura', LARGURA / 2, 470);
       text('Pressione ESC para pausar', LARGURA / 2, 495);
     }
 
-    fill(color(CORES.texto + '99'));
+    fill(color(Tema.texto + '99'));
     textAlign(CENTER);
     textSize(16);
     text('Clique para jogar', LARGURA / 2, 555);
+
+    drawingContext.globalAlpha = 1;
   }
 
   /**
@@ -158,18 +175,18 @@ class IntroFase extends Cena {
         text(linha.trim(), centroX, linhaY);
         linha = palavras[i] + ' ';
         linhaY += 18;
-      } else {
-        linha += palavras[i] + ' ';
+        continue;
       }
+      linha += palavras[i] + ' ';
     }
 
-    // sobra de linha no final
     if (linha.trim() !== '') {
       text(linha.trim(), centroX, linhaY);
     }
   }
 
   aoClicar() {
+    Cena.somClique.tocar();
     const Classe = CLASSES_FASE[this.numero];
     trocarCena(new Classe());
   }

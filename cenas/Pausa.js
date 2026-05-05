@@ -1,8 +1,16 @@
 class Pausa extends Cena {
+  /** @type {Som} */
+  static somTransicao;
+
+  static precarregar() {
+    Pausa.somTransicao = new Som(['ui/transicao.ogg'], 0, 0.5);
+  }
+
   /** @param {Fase} fase */
   constructor(fase) {
     super();
     this.fase = fase;
+    Pausa.somTransicao.tocar();
   }
 
   update() {}
@@ -27,6 +35,7 @@ class Pausa extends Cena {
   aoApertarTecla(tecla) {
     // 80 = P, 27 = esc
     if (tecla === 80 || tecla === 27) {
+      Pausa.somTransicao.tocar();
       trocarCena(this.fase);
     }
   }

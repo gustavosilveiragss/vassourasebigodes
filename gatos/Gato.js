@@ -1,5 +1,17 @@
 // classe base de todo gato
 class Gato {
+  /** @type {Som|undefined} */
+  static somMiado;
+
+  /** @type {number} raio de colisao padrao. miau e fofinho sobrescrevem */
+  static raio = 22;
+
+  /** @type {string} fallback se o sprite nao carregar */
+  static cor = '#000000';
+
+  /** @type {number} velocidade quando perseguindo a bolinha */
+  static velocidadeChase = 2.7;
+
   // texto do card da intro
   /** @type {string} */
   static descricao = '';
@@ -19,17 +31,18 @@ class Gato {
   /**
    * @param {number} x
    * @param {number} y
-   * @param {number} raio raio de colisao
-   * @param {string} cor fallback se sprite nao carregar
    * @param {string} nome usado pra achar o sprite
    */
-  constructor(x, y, raio, cor, nome) {
+  constructor(x, y, nome) {
     /** @type {p5.Vector} centro do gato */
     this.posicao = createVector(x, y);
     /** @type {p5.Vector} px/frame */
     this.velocidade = createVector(0, 0);
-    this.raio = raio;
-    this.cor = cor;
+    /** @type {number} */
+    this.raio = this.constructor.raio;
+    /** @type {string} */
+    this.cor = this.constructor.cor;
+    /** @type {string} */
     this.nome = nome;
     /** @type {boolean} encaixado num slot do sofa */
     this.sentado = false;
@@ -65,22 +78,21 @@ class Gato {
 
     if (this.sentado) {
       // bolinha atraiu, levanta do sofa
-      if (bolinhaAlvo) {
-        this.sentado = false;
-      } else {
+      if (!bolinhaAlvo) {
         // puxa devagar pra posicao do slot
         this.posicao.x += (this.posicaoAlvo.x - this.posicao.x) * 0.15;
         this.posicao.y += (this.posicaoAlvo.y - this.posicao.y) * 0.15;
         this.velocidade.set(0, 0);
         return;
       }
+      this.sentado = false;
     }
 
     if (bolinhaAlvo) {
       // vai atras da bolinha que escolheu ele
       const direcao = p5.Vector.sub(bolinhaAlvo.posicao, this.posicao);
       direcao.normalize();
-      this.velocidade.add(p5.Vector.mult(direcao, VELOCIDADES.normal * 1.5));
+      this.velocidade.add(p5.Vector.mult(direcao, Gato.velocidadeChase));
     } else {
       this.mover(); // movimentacao especifica do gato
     }
@@ -101,6 +113,12 @@ class Gato {
   // cada gato tem o seu mover (sobrescreve)
   mover() {}
 
+  miar() {
+    if (this.constructor.somMiado) {
+      this.constructor.somMiado.tocar();
+    }
+  }
+
   /**
    * @param {p5.Vector} direcao
    * @param {number} forca
@@ -109,14 +127,14 @@ class Gato {
     this.velocidade.add(p5.Vector.mult(direcao, forca));
   }
 
-  noSofa = (sofa) => {
+  noSofa(sofa) {
     return (
       this.posicao.x > sofa.x + this.raio &&
       this.posicao.x < sofa.x + sofa.largura - this.raio &&
       this.posicao.y > sofa.y + this.raio &&
       this.posicao.y < sofa.y + sofa.altura - this.raio
     );
-  };
+  }
 
   /** @returns {string} */
   direcaoAtual() {
@@ -131,8 +149,11 @@ class Gato {
     }
     this.framesParado = 0;
     let dir;
-    if (abs(vx) > abs(vy)) dir = vx < 0 ? 'esquerda' : 'direita';
-    else dir = vy > 0 ? 'frente' : 'costas';
+    if (abs(vx) > abs(vy)) {
+      dir = vx < 0 ? 'esquerda' : 'direita';
+    } else {
+      dir = vy > 0 ? 'frente' : 'costas';
+    }
     this.direcaoUltima = dir;
     return dir;
   }
@@ -189,7 +210,7 @@ class Gato {
       ellipse(this.posicao.x, this.posicao.y, this.raio * 2.2, this.raio * 2);
     }
 
-    fill(CORES.texto);
+    fill(Tema.texto);
     textAlign(CENTER);
     textSize(12);
     text(this.nome, this.posicao.x, this.posicao.y + meiaAlturaSprite + 30);
