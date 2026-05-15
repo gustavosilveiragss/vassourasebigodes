@@ -36,4 +36,4 @@ As próximas etapas planejadas são:
 
 ## Créditos
 
-Música: [comfi beats](https://www.youtube.com/@comfibeats) (uso sem fins lucrativos permitido). SFX: [Kenney.nl](https://kenney.nl) e [Freesound.org](https://freesound.org).
+Música: [comfi beats](https://www.youtube.com/@comfibeats) (uso sem fins lucrativos permitido). SFX: [Kenney.nl](https://kenney.nl), [Freesound.org](https://freesound.org) e [OpenGameArt.org](https://opengameart.org).

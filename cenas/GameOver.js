@@ -3,7 +3,7 @@ class GameOver extends Cena {
   static somGameover;
 
   static precarregar() {
-    GameOver.somGameover = new Som(['jogo/gameover.mp3'], 0, 0.5);
+    GameOver.somGameover = new Som(['jogo/gameover.ogg'], 0, 0.5);
   }
 
   /** @param {number} faseAtual */
@@ -33,10 +33,8 @@ class GameOver extends Cena {
 
   /** @param {number} tecla */
   aoApertarTecla(tecla) {
-    if (tecla === 77) {
-      // tecla M
-      Cena.somClique.tocar();
-      trocarCena(new Inicio());
-    }
+    if (tecla !== 77) return; // tecla M
+    Cena.somClique.tocar();
+    trocarCena(new Inicio());
   }
 }

@@ -62,7 +62,9 @@ class Obstaculo {
     if (projecao < 0) {
       objeto.velocidade.sub(p5.Vector.mult(normal, 2 * projecao));
       objeto.velocidade.mult(0.5);
+      return true;
     }
+    return false;
   }
 
   display() {

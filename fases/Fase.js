@@ -43,12 +43,17 @@ class Fase extends Cena {
     this.sofa = sofa || Fase.SOFA_PADRAO;
     this.slotsOcupados = new Array(5).fill(null); // qual instancia de gato ta em qual slot do sofa
     this.vassoura = new Vassoura();
+    /** @type {boolean} trava update apos disparar transicao */
+    this.transicionando = false;
   }
 
   update() {
+    if (this.transicionando) return;
+
     this.timer--;
 
     if (this.timer <= 0) {
+      this.transicionando = true;
       trocarCena(new GameOver(this.numero));
       return;
     }
@@ -111,6 +116,7 @@ class Fase extends Cena {
             gato.sentado = true;
             gato.posicaoAlvo = Fase.SLOTS[i];
             Fase.somSentou.tocar();
+            Particulas.criarPo(gato.posicao.x, gato.posicao.y + 12, 8);
             break;
           }
         }
@@ -126,6 +132,9 @@ class Fase extends Cena {
     }
 
     if (todosSentados) {
+      this.transicionando = true;
+      Particulas.criarConfete(cursorX, cursorY, 40);
+      Shake.tremer(1.2, 8);
       trocarCena(new VitoriaFase(this.numero, this.timer));
     }
   }

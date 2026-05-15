@@ -37,6 +37,8 @@ class Bolinha {
     this.tocandoParedeX = false;
     /** @type {boolean} */
     this.tocandoParedeY = false;
+    /** @type {number} cooldown em frames pra n spammar po contra obstaculo */
+    this.cooldownPoObstaculo = 0;
   }
 
   /** @param {Obstaculo[]} obstaculos */
@@ -62,6 +64,7 @@ class Bolinha {
       // som so no primeiro contato, evita spam quando fica quicando no canto
       if (!this.tocandoParedeX && abs(this.velocidade.x) > 0.5) {
         Bolinha.somQuica.tocar();
+        Particulas.criarPo(this.posicao.x, this.posicao.y, 4);
       }
     }
     this.tocandoParedeX = naParedeX;
@@ -74,12 +77,26 @@ class Bolinha {
       // som so no primeiro contato, evita spam quando fica quicando no canto
       if (!this.tocandoParedeY && abs(this.velocidade.y) > 0.5) {
         Bolinha.somQuica.tocar();
+        Particulas.criarPo(this.posicao.x, this.posicao.y, 4);
       }
     }
     this.tocandoParedeY = naParedeY;
 
+    if (this.cooldownPoObstaculo > 0) {
+      this.cooldownPoObstaculo--;
+    }
+
+    let colidiu = false;
     for (let obstaculo of obstaculos) {
-      obstaculo.resolverColisao(this);
+      if (obstaculo.resolverColisao(this)) {
+        colidiu = true;
+      }
+    }
+
+    // emite po so de tempos em tempos, mesmo se ficar quicando contra a parede
+    if (colidiu && this.cooldownPoObstaculo === 0) {
+      Particulas.criarPo(this.posicao.x, this.posicao.y, 4);
+      this.cooldownPoObstaculo = 30;
     }
 
     // colisao com cada gato: empurra fora e quica
@@ -110,6 +127,8 @@ class Bolinha {
 
           if (novoContato) {
             Bolinha.somQuica.tocar();
+            Particulas.criarPo(this.posicao.x, this.posicao.y, 4);
+            Particulas.criarPelo(this.posicao.x, this.posicao.y, 2, gato.cor);
           }
 
           continue;
@@ -123,6 +142,7 @@ class Bolinha {
 
         if (novoContato) {
           Bolinha.somQuica.tocar();
+          Particulas.criarPo(this.posicao.x, this.posicao.y, 3);
         }
       }
     }
@@ -172,6 +192,7 @@ class Bolinha {
     this.timer = 0;
     this.timerPerseguicao = 0;
     Bolinha.somSeleciona.tocar();
+    Particulas.criarBrilho(this.posicao.x, this.posicao.y);
   }
 
   display() {

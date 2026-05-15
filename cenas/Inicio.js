@@ -18,7 +18,6 @@ class Inicio extends Cena {
   aoClicar() {
     Cena.somClique.tocar();
     MusicaFundo.iniciar();
-    // fade so quando comeca pela fase 1
     trocarCena(new IntroFase(FASE_INICIAL, FASE_INICIAL === 1));
   }
 }

@@ -43,6 +43,7 @@ class Salem extends Gato {
       this.velocidade.set(direcao.x * 100, direcao.y * 100);
       this.cooldown = 30;
       this.miar();
+      Particulas.criarPo(this.posicao.x, this.posicao.y + 18, 8);
     }
   }
 }

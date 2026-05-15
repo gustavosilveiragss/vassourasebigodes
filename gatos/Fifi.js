@@ -36,6 +36,7 @@ class Fifi extends Gato {
       const fuga = createVector(this.posicao.x - cursorX, this.posicao.y - cursorY);
       fuga.normalize();
       this.direcao = atan2(fuga.y, fuga.x);
+      Particulas.criarPo(this.posicao.x, this.posicao.y + 15, 5);
     }
 
     // enquanto ta fugindo gira o angulo pra fazer curva

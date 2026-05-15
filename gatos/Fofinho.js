@@ -37,5 +37,6 @@ class Fofinho extends Gato {
     direcao.normalize();
     this.velocidade.set(direcao.x * 100, direcao.y * 100);
     this.cooldown = 90;
+    Particulas.criarPo(this.posicao.x, this.posicao.y + 14, 6);
   }
 }

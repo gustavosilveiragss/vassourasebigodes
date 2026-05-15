@@ -4,9 +4,16 @@ let cursorX;
 let cursorY;
 let SPRITES = {};
 
-/** @param {Cena} novaCena */
-function trocarCena(novaCena) {
-  cenaAtual = novaCena;
+/**
+ * @param {Cena} novaCena
+ * @param {boolean} [comFade] default true
+ */
+function trocarCena(novaCena, comFade = true) {
+  if (!comFade) {
+    cenaAtual = novaCena;
+    return;
+  }
+  Transicao.iniciar(novaCena);
 }
 
 /**
@@ -73,6 +80,7 @@ function setup() {
   textFont('Fredoka One');
   drawingContext.imageSmoothingEnabled = true;
   drawingContext.imageSmoothingQuality = 'high';
+  Efeitos.preparar();
   cenaAtual = new Inicio();
 }
 
@@ -82,16 +90,28 @@ function draw() {
   cursorY = constrain(mouseY / ESCALA, 0, ALTURA - 1);
 
   push();
-  scale(ESCALA);
-  cenaAtual.update();
-  cenaAtual.display();
+    scale(ESCALA);
+
+    push();
+      Shake.aplicar(); // aplica shake via translate, antes de desenhar os objetos
+      cenaAtual.update();
+      cenaAtual.display();
+      Particulas.desenhar();
+    pop();
+
+    Filtro.desenhar(); // desenha filtro de grain, depois dos objetos
   pop();
+
+  Transicao.desenhar();
+  Efeitos.atualizar();
 }
 
 function mousePressed() {
+  if (Transicao.ativa) return;
   cenaAtual.aoClicar();
 }
 
 function keyPressed() {
+  if (Transicao.ativa) return;
   cenaAtual.aoApertarTecla(keyCode);
 }

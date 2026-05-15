@@ -36,7 +36,7 @@ class Pausa extends Cena {
     // 80 = P, 27 = esc
     if (tecla === 80 || tecla === 27) {
       Pausa.somTransicao.tocar();
-      trocarCena(this.fase);
+      trocarCena(this.fase, false);
     }
   }
 }

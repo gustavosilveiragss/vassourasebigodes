@@ -51,6 +51,12 @@ class Vassoura {
         if (!this.gatosEmContato.has(gato)) {
           Vassoura.somBate.tocar();
           gato.miar();
+
+          const pontoImpactoX = (cursorX + gato.posicao.x) / 2;
+          const pontoImpactoY = (cursorY + gato.posicao.y) / 2;
+          Particulas.criarPo(pontoImpactoX, pontoImpactoY, 4);
+          Particulas.criarPelo(pontoImpactoX, pontoImpactoY, 3, gato.cor, direcao.x, direcao.y);
+          Shake.tremer(0.6, 4);
         }
       }
     }
@@ -59,13 +65,13 @@ class Vassoura {
   }
 
   display() {
-    push(); // salva o estado de transformacoes e estilos
-    translate(cursorX, cursorY);
-    rotate(PI / 4);
-    rectMode(CENTER);
-    fill(Vassoura.cor);
-    noStroke();
-    rect(0, 0, 6, 38, 3);
-    pop(); // volta o estado pra n afetar o que vem depois
+    push();
+      translate(cursorX, cursorY);
+      rotate(PI / 4);
+      rectMode(CENTER);
+      fill(Vassoura.cor);
+      noStroke();
+      rect(0, 0, 6, 38, 3);
+    pop();
   }
 }

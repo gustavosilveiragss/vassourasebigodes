@@ -60,6 +60,8 @@ class Gato {
     this.spriteUltima = null;
     /** @type {number} frames parado seguidos, atrasa transicao pra sentado */
     this.framesParado = 0;
+    /** @type {number} cooldown em frames pra n spammar po contra obstaculo */
+    this.cooldownPoObstaculo = 0;
   }
 
   /**
@@ -86,6 +88,7 @@ class Gato {
         return;
       }
       this.sentado = false;
+      Particulas.criarPo(this.posicao.x, this.posicao.y + 10, 4);
     }
 
     if (bolinhaAlvo) {
@@ -105,8 +108,21 @@ class Gato {
     this.posicao.x = constrain(this.posicao.x, this.raio, LARGURA - this.raio);
     this.posicao.y = constrain(this.posicao.y, this.raio, ALTURA - this.raio);
 
+    if (this.cooldownPoObstaculo > 0) {
+      this.cooldownPoObstaculo--;
+    }
+
+    let colidiu = false;
     for (let obstaculo of obstaculos) {
-      obstaculo.resolverColisao(this);
+      if (obstaculo.resolverColisao(this)) {
+        colidiu = true;
+      }
+    }
+
+    // emite po so de tempos em tempos, mesmo se ficar empurrando contra a parede
+    if (colidiu && this.cooldownPoObstaculo === 0) {
+      Particulas.criarPo(this.posicao.x, this.posicao.y, 5);
+      this.cooldownPoObstaculo = 30;
     }
   }
 
