@@ -27,6 +27,10 @@ npm start
 
 A versão publicada no github pages está em https://vassourasebigodes.marmota.dev.br.
 
+## Vídeo Explicativo
+
+https://www.youtube.com/watch?v=t6hfNe8GNiU
+
 ## Créditos
 
 Música: [comfi beats](https://www.youtube.com/@comfibeats) (uso sem fins lucrativos permitido). SFX: [Kenney.nl](https://kenney.nl), [Freesound.org](https://freesound.org) e [OpenGameArt.org](https://opengameart.org).
