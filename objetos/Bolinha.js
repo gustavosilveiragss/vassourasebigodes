@@ -8,11 +8,15 @@ class Bolinha {
   static raio = 10;
   /** @type {string} */
   static cor = '#E86B6B';
+  /** @type {number} frames de espera antes de atrair o proximo gato */
+  static FRAMES_ESPERA = 360; // 6 segundos a 60fps
+  /** @type {number} forca do empurrao da vassoura */
+  static FORCA_VASSOURA = 4;
 
   static precarregar() {
     Bolinha.somQuica = new Som(
       ['jogo/bolinha_quica_1.ogg', 'jogo/bolinha_quica_2.ogg'],
-      0,
+      8,
       0.5,
     );
     Bolinha.somSeleciona = new Som(['jogo/bolinha_seleciona.ogg'], 0, 0.55);
@@ -29,16 +33,8 @@ class Bolinha {
     this.raio = Bolinha.raio;
     this.gatos = gatos;
     this.gatoAtraido = null;
-    this.timer = -360; // negativo = espera antes de atrair o proximo gato
+    this.framesEspera = 0;
     this.timerPerseguicao = 0;
-    /** @type {Set<Gato>} contato no frame anterior, dispara som so na entrada */
-    this.gatosEmContato = new Set();
-    /** @type {boolean} */
-    this.tocandoParedeX = false;
-    /** @type {boolean} */
-    this.tocandoParedeY = false;
-    /** @type {number} cooldown em frames pra n spammar po contra obstaculo */
-    this.cooldownPoObstaculo = 0;
   }
 
   /** @param {Obstaculo[]} obstaculos */
@@ -51,128 +47,73 @@ class Bolinha {
       }
     }
 
-    this.velocidade.mult(0.985); // friccao baixa pra ficar slippery
+    // atrito leve e move a posicao na direcao da velocidade
+    this.velocidade.mult(0.985);
     this.posicao.add(this.velocidade);
 
-    // quica nas paredes, perde um pouco no impacto
+    // quica nas paredes invertendo a velocidade naquele eixo e perdendo energia
     const fatorPerda = -0.9;
-    const naParedeX = this.posicao.x < this.raio || this.posicao.x > LARGURA - this.raio;
-    if (naParedeX) {
+    if (this.posicao.x < this.raio || this.posicao.x > LARGURA - this.raio) {
       this.velocidade.x *= fatorPerda;
       this.posicao.x = constrain(this.posicao.x, this.raio, LARGURA - this.raio);
-
-      // som so no primeiro contato, evita spam quando fica quicando no canto
-      if (!this.tocandoParedeX && abs(this.velocidade.x) > 0.5) {
-        Bolinha.somQuica.tocar();
-        Particulas.criarPo(this.posicao.x, this.posicao.y, 4);
-      }
+      if (abs(this.velocidade.x) > 0.5) Bolinha.somQuica.tocar();
     }
-    this.tocandoParedeX = naParedeX;
-
-    const naParedeY = this.posicao.y < this.raio || this.posicao.y > ALTURA - this.raio;
-    if (naParedeY) {
+    if (this.posicao.y < this.raio || this.posicao.y > ALTURA - this.raio) {
       this.velocidade.y *= fatorPerda;
       this.posicao.y = constrain(this.posicao.y, this.raio, ALTURA - this.raio);
-
-      // som so no primeiro contato, evita spam quando fica quicando no canto
-      if (!this.tocandoParedeY && abs(this.velocidade.y) > 0.5) {
-        Bolinha.somQuica.tocar();
-        Particulas.criarPo(this.posicao.x, this.posicao.y, 4);
-      }
-    }
-    this.tocandoParedeY = naParedeY;
-
-    if (this.cooldownPoObstaculo > 0) {
-      this.cooldownPoObstaculo--;
+      if (abs(this.velocidade.y) > 0.5) Bolinha.somQuica.tocar();
     }
 
-    let colidiu = false;
     for (let obstaculo of obstaculos) {
-      if (obstaculo.resolverColisao(this)) {
-        colidiu = true;
-      }
+      obstaculo.resolverColisao(this);
     }
 
-    // emite po so de tempos em tempos, mesmo se ficar quicando contra a parede
-    if (colidiu && this.cooldownPoObstaculo === 0) {
-      Particulas.criarPo(this.posicao.x, this.posicao.y, 4);
-      this.cooldownPoObstaculo = 30;
-    }
-
-    // colisao com cada gato: empurra fora e quica
-    const novosContatos = new Set();
+    // colisao com cada gato, empurra a bolinha pra fora e faz ela quicar
     for (const gato of this.gatos) {
-      const deltaX = this.posicao.x - gato.posicao.x;
-      const deltaY = this.posicao.y - gato.posicao.y;
-      const distancia = sqrt(deltaX * deltaX + deltaY * deltaY);
-      const distanciaMinima = this.raio + gato.raio;
+      // doGato é o vetor do gato ate a bolinha, o mag() devolve o tamanho dele q aqui é a distancia
+      const doGato = p5.Vector.sub(this.posicao, gato.posicao);
+      const distancia = doGato.mag();
+      const distanciaMinima = this.raio + gato.raio; // encostam qd ficam mais perto q isso
 
       if (distancia < distanciaMinima && distancia > 0) {
-        novosContatos.add(gato);
-
-        const novoContato = !this.gatosEmContato.has(gato);
-
-        const normalX = deltaX / distancia;
-        const normalY = deltaY / distancia;
-        const sobreposicao = distanciaMinima - distancia;
-        this.posicao.x += normalX * sobreposicao;
-        this.posicao.y += normalY * sobreposicao;
+        // normalize encolhe o vetor pra tamanho 1 sobrando so a direcao, ai empurro a bolinha pra fora
+        doGato.normalize();
+        this.posicao.add(p5.Vector.mult(doGato, distanciaMinima - distancia));
 
         if (gato === this.gatoAtraido) {
-          // gato atraido encostou, launch aleatorio
-          const angulo = random(TWO_PI);
-          this.velocidade = createVector(cos(angulo) * 5, sin(angulo) * 5);
-
+          // o gato perseguido encostou, dispara num angulo aleatorio
+          // fromAngle faz um vetor tamanho 1 nesse angulo e o mult(5) deixa ele com tamanho 5 q é a velocidade
+          this.velocidade = p5.Vector.fromAngle(random(TWO_PI)).mult(5);
           this.liberarGato();
-
-          if (novoContato) {
-            Bolinha.somQuica.tocar();
-            Particulas.criarPo(this.posicao.x, this.posicao.y, 4);
-            Particulas.criarPelo(this.posicao.x, this.posicao.y, 2, gato.cor);
-          }
-
+          Bolinha.somQuica.tocar();
           continue;
         }
 
-        // reflete a velocidade pelo eixo da normal e perde energia
-        const projecao = this.velocidade.x * normalX + this.velocidade.y * normalY;
-        this.velocidade.x -= 2 * projecao * normalX;
-        this.velocidade.y -= 2 * projecao * normalY;
-        this.velocidade.mult(0.85);
-
-        if (novoContato) {
-          Bolinha.somQuica.tocar();
-          Particulas.criarPo(this.posicao.x, this.posicao.y, 3);
-        }
+        // bateu num gato qualquer, volta pra tras perdendo energia
+        this.velocidade.mult(-0.85);
+        Bolinha.somQuica.tocar();
       }
     }
-    this.gatosEmContato = novosContatos;
 
-    // vassoura empurra com forca proporcional a velocidade do mouse
-    const distVassoura = dist(this.posicao.x, this.posicao.y, cursorX, cursorY);
+    // vassoura empurra a bolinha pra longe do cursor com forca fixa
+    // doCursor é o vetor do cursor ate a bolinha, o mag() é a distancia entre eles
+    const doCursor = p5.Vector.sub(this.posicao, createVector(cursorX, cursorY));
+    const distVassoura = doCursor.mag();
     const distMinVassoura = this.raio + Vassoura.raio;
     if (distVassoura < distMinVassoura && distVassoura > 0) {
-      const normalX = (this.posicao.x - cursorX) / distVassoura;
-      const normalY = (this.posicao.y - cursorY) / distVassoura;
-      const sobreposicao = distMinVassoura - distVassoura;
-      this.posicao.x += normalX * sobreposicao;
-      this.posicao.y += normalY * sobreposicao;
-
-      const cursorAnteriorX = constrain(pmouseX / ESCALA, 0, LARGURA - 1);
-      const cursorAnteriorY = constrain(pmouseY / ESCALA, 0, ALTURA - 1);
-      const deltaCursorX = cursorX - cursorAnteriorX;
-      const deltaCursorY = cursorY - cursorAnteriorY;
-      const velocidadeMouse = sqrt(deltaCursorX * deltaCursorX + deltaCursorY * deltaCursorY);
-      const forca = velocidadeMouse * 0.25 + 0.6;
-      this.velocidade.x += normalX * forca;
-      this.velocidade.y += normalY * forca;
+      // normalize pra sobrar so a direcao longe do cursor, o tamanho do empurrao quem da é a FORCA
+      doCursor.normalize();
+      // tira a sobreposicao e soma a forca do empurrao na velocidade
+      this.posicao.add(p5.Vector.mult(doCursor, distMinVassoura - distVassoura));
+      this.velocidade.add(p5.Vector.mult(doCursor, Bolinha.FORCA_VASSOURA));
     }
 
-    // sem gato atraido conta o cooldown e seleciona novo quando estiver parada
+    // sem gato atraido espera um tempo parada e seleciona o proximo
+    // o mag() da o tamanho da velocidade, perto de 0 quer dizer q ela quase parou
     if (this.gatoAtraido === null) {
-      this.timer++;
+      this.framesEspera++;
       const parada = this.velocidade.mag() < 0.3;
-      if (parada && this.timer > 0) {
+      if (parada && this.framesEspera >= Bolinha.FRAMES_ESPERA) {
         this.selecionarGato();
       }
     }
@@ -181,7 +122,7 @@ class Bolinha {
   liberarGato() {
     this.gatoAtraido = null;
     this.timerPerseguicao = 0;
-    this.timer = -360;
+    this.framesEspera = 0;
   }
 
   selecionarGato() {
@@ -189,34 +130,28 @@ class Bolinha {
     // escolhe qualquer gato, inclusive os que ja sentaram no sofa
     const gato = this.gatos[floor(random(this.gatos.length))];
     this.gatoAtraido = gato;
-    this.timer = 0;
     this.timerPerseguicao = 0;
     Bolinha.somSeleciona.tocar();
-    Particulas.criarBrilho(this.posicao.x, this.posicao.y);
   }
 
   display() {
-    // sombra embaixo da bolinha
     noStroke();
-    fill(0, 60);
-    ellipse(this.posicao.x, this.posicao.y + this.raio * 1.1, this.raio * 1.6, this.raio * 0.5);
-
     fill(Bolinha.cor);
     ellipse(this.posicao.x, this.posicao.y, this.raio * 2, this.raio * 2);
 
-    // arco verde diminui ate sumir quando ela vai escolher o proximo gato
-    // anel cheio enquanto ta atraindo um gato
-    const diametro = (this.raio + 2) * 2;
-    noFill();
-    stroke(76, 175, 80, 240);
-    strokeWeight(3);
-    
-    if (this.timer < 0) {
-      const progresso = -this.timer / 360;
-      // comeca no topo (-HALF_PI) e varre o circulo todo (TWO_PI) proporcional ao progresso
+    // anel verde em volta da bolinha: encolhe conforme o tempo de espera passa
+    if (this.gatoAtraido === null) {
+      const progresso = 1 - this.framesEspera / Bolinha.FRAMES_ESPERA; // divide para obter a fração do tempo de espera (0 a 1) e inverte com 1- para o anel diminuir
+      const diametro = (this.raio + 2) * 2;
+      noFill();
+      stroke(76, 175, 80, 240);
+      strokeWeight(3);
+      // arc(x, y, largura, altura, anguloInicio, anguloFim) desenha so um pedaco da borda do circulo
+      // angulo em radianos, 0 é a direita e menos HALF_PI é o topo, comeco no topo e desenho
+      // um pedaco igual a TWO_PI (volta inteira) vezes o progresso, ai o anel cheio é a espera
+      // inteira e some aos poucos ate na hora de escolher outro gato
       arc(this.posicao.x, this.posicao.y, diametro, diametro, -HALF_PI, -HALF_PI + TWO_PI * progresso);
+      noStroke();
     }
-
-    noStroke();
   }
 }

@@ -27,13 +27,6 @@ npm start
 
 A versão publicada no github pages está em https://vassourasebigodes.marmota.dev.br.
 
-## Planos futuros
-
-As próximas etapas planejadas são:
-
-- **GIFs demonstrativas** entre os níveis mostrando a movimentação de cada gato, para que o jogador entenda a mecânica antes de iniciar a fase
-- **Efeitos visuais** shake de câmera, particulas e transições para deixar mais responsivo
-
 ## Créditos
 
 Música: [comfi beats](https://www.youtube.com/@comfibeats) (uso sem fins lucrativos permitido). SFX: [Kenney.nl](https://kenney.nl), [Freesound.org](https://freesound.org) e [OpenGameArt.org](https://opengameart.org).

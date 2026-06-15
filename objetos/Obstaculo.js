@@ -18,20 +18,19 @@ class Obstaculo {
   // se o objeto encostou no obstaculo, joga ele pra fora pelo lado mais perto
   /** @param {{posicao: p5.Vector, velocidade: p5.Vector, raio: number}} objeto */
   resolverColisao(objeto) {
-    // colisao circulo-retangulo precisa tratar 2 casos: centro do circulo fora
-    // do retangulo e centro dentro (acontece quando entra muito rapido). sofri
-    // pra fazer funcionar pros 2 e precisei de ajuda de IA, antes saia pelo 
-    // lado errado quando entrava por cima
+    // ponto do retangulo mais perto do objeto: preso (constrain) nas bordas do retangulo
+    const proximo = createVector(
+      constrain(objeto.posicao.x, this.x, this.x + this.largura),
+      constrain(objeto.posicao.y, this.y, this.y + this.altura),
+    );
 
-    // ponto do retangulo mais perto do centro do circulo
-    const proximoX = constrain(objeto.posicao.x, this.x, this.x + this.largura);
-    const proximoY = constrain(objeto.posicao.y, this.y, this.y + this.altura);
+    // vetor desse ponto ate o centro do objeto, é a direcao pra empurrar pra fora
+    // mag() 0 quer dizer q o ponto e o centro sao o mesmo
+    let normal = p5.Vector.sub(objeto.posicao, proximo);
+    let sobreposicao; // quanto o objeto entrou no obstaculo, pra saber quanto empurrar pra fora
 
-    /** @type {p5.Vector} */ let normal;
-    /** @type {number} */ let sobreposicao;
-
-    if (proximoX === objeto.posicao.x && proximoY === objeto.posicao.y) {
-      // centro do circulo dentro do retangulo: empurra pelo lado mais proximo
+    if (normal.mag() === 0) {
+      // centro do objeto ta dentro do retangulo: empurra pela parede mais proxima
       const distEsquerda = objeto.posicao.x - this.x;
       const distDireita = this.x + this.largura - objeto.posicao.x;
       const distCima = objeto.posicao.y - this.y;
@@ -45,26 +44,18 @@ class Obstaculo {
 
       sobreposicao = menor + objeto.raio;
     } else {
-      // centro fora: vetor do ponto mais proximo ate o centro do circulo
-      const diferenca = createVector(objeto.posicao.x - proximoX, objeto.posicao.y - proximoY);
-      const distancia = diferenca.mag();
+      // o mag() do vetor é a distancia do objeto ate a borda
+      // se for maior q o raio nem encostou entao sai
+      const distancia = normal.mag();
       if (distancia >= objeto.raio) return;
-      normal = diferenca.div(distancia);
+      // normalize deixa a normal com tamanho 1 so a direcao pra fora
+      normal.normalize();
       sobreposicao = objeto.raio - distancia;
     }
 
-    // empurra o objeto pra fora ao longo da normal
+    // empurra o objeto pra fora ao longo da normal e freia um pouco
     objeto.posicao.add(p5.Vector.mult(normal, sobreposicao + 1));
-
-    // reflete a velocidade pelo eixo da normal (quica) e perde energia
-    // so reflete se ta indo pra dentro, evita tremor frame a frame
-    const projecao = objeto.velocidade.dot(normal);
-    if (projecao < 0) {
-      objeto.velocidade.sub(p5.Vector.mult(normal, 2 * projecao));
-      objeto.velocidade.mult(0.5);
-      return true;
-    }
-    return false;
+    objeto.velocidade.mult(0.5);
   }
 
   display() {

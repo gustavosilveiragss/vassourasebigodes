@@ -6,12 +6,6 @@ class Tom extends Gato {
   static velocidade = 1.8;
   /** @type {string} */
   static descricao = 'Esse gato é extremamente carente e vai na sua direção pra onde você for';
-  /** @type {{frente: number, costas: number, direita: number, esquerda: number}} */
-  static frames = { frente: 3, costas: 1, direita: 2, esquerda: 2 };
-  static sombras = {
-    andando: { fracaoY: 0.95, fracaoLargura: 0.7 },
-    sentado: { fracaoY: 0.85, fracaoLargura: 0.7 },
-  };
 
   static precarregar() {
     Tom.somMiado = new Som(['gatos/tom_1.mp3', 'gatos/tom_2.mp3'], 180, 0.55);
@@ -26,12 +20,14 @@ class Tom extends Gato {
   }
 
   mover() {
-    const distancia = dist(cursorX, cursorY, this.posicao.x, this.posicao.y);
-    if (distancia < 70) return;
+    // aoCursor é o vetor do gato ate o cursor, o mag() da o tamanho dele q é a distancia
+    // se ja ta perto (menos de 70) nao precisa andar mais
+    const aoCursor = p5.Vector.sub(createVector(cursorX, cursorY), this.posicao);
+    if (aoCursor.mag() < 70) return;
 
-    // acelera em direcao ao cursor
-    const direcao = createVector(cursorX - this.posicao.x, cursorY - this.posicao.y);
-    direcao.normalize();
-    this.velocidade.add(p5.Vector.mult(direcao, Tom.velocidade));
+    // normalize deixa o vetor com tamanho 1 so a direcao
+    // ai ele acelera sempre o mesmo tanto pro lado do cursor
+    aoCursor.normalize();
+    this.velocidade.add(p5.Vector.mult(aoCursor, Tom.velocidade));
   }
 }

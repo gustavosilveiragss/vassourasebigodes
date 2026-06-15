@@ -3,14 +3,7 @@ class Salem extends Gato {
   /** @type {string} */
   static cor = '#2D2D2D';
   /** @type {string} */
-  static descricao =
-    'Salem, o gato vindo direto dos infernos, é um filhote que pula pra longe toda vez que você se aproxima';
-  /** @type {{frente: number, costas: number, direita: number, esquerda: number}} */
-  static frames = { frente: 1, costas: 1, direita: 1, esquerda: 2 };
-  static sombras = {
-    andando: { fracaoY: 1.02, fracaoLargura: 0.55 },
-    sentado: { fracaoY: 0.95, fracaoLargura: 0.55 },
-  };
+  static descricao = 'Salem, o gato vindo direto dos infernos, é um filhote que pula pra longe toda vez que você se aproxima';
 
   static precarregar() {
     Salem.somMiado = new Som(['gatos/salem_1.mp3', 'gatos/salem_2.mp3'], 180, 0.55);
@@ -37,13 +30,14 @@ class Salem extends Gato {
 
     const distancia = dist(cursorX, cursorY, this.posicao.x, this.posicao.y);
     if (distancia < 150) {
-      // pula no sentido oposto do cursor
-      const direcao = createVector(this.posicao.x - cursorX, this.posicao.y - cursorY);
-      direcao.normalize();
-      this.velocidade.set(direcao.x * 100, direcao.y * 100);
+      // vetor que aponta do cursor pro gato é a direcao da fuga
+      const fuga = p5.Vector.sub(this.posicao, createVector(cursorX, cursorY));
+      // setMag deixa esse vetor com tamanho 100 mantendo a direcao
+      // ai o pulo tem sempre a mesma forca pra qualquer lado, ja viro a velocidade do pulo
+      fuga.setMag(100);
+      this.velocidade.set(fuga);
       this.cooldown = 30;
       this.miar();
-      Particulas.criarPo(this.posicao.x, this.posicao.y + 18, 8);
     }
   }
 }

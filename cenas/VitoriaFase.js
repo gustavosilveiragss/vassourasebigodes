@@ -51,7 +51,7 @@ class VitoriaFase extends Cena {
       salvarRecorde(faseConcluida, framesRestantes);
     }
 
-    VitoriaFase.somVitoria.tocar(true);
+    VitoriaFase.somVitoria.tocar();
   }
 
   display() {

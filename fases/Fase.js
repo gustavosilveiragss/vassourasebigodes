@@ -69,7 +69,7 @@ class Fase extends Cena {
       this.gatos[i].update(this.bolinhas, this.obstaculos);
     }
 
-    // colisao entre gatos: separa cada par que ta sobreposto
+    // colisao entre gatos: separa cada par que ta sobreposto. Itera pegando cada par uma vez so
     for (let i = 0; i < this.gatos.length; i++) {
       for (let j = i + 1; j < this.gatos.length; j++) {
         const gatoA = this.gatos[i];
@@ -77,12 +77,14 @@ class Fase extends Cena {
 
         if (gatoA.sentado || gatoB.sentado) continue;
 
+        // delta é o vetor do gato A ate o gato B, o mag() é o tamanho dele q é a distancia entre os dois
         const delta = p5.Vector.sub(gatoB.posicao, gatoA.posicao);
         const distancia = delta.mag();
         const minimo = gatoA.raio + gatoB.raio;
 
         if (distancia < minimo && distancia > 0) {
-          // empurra cada um pra metade da sobreposicao, cada gato move metade da distancia que falta pra n se tocarem mais
+          // estao sobrepostos, cada um anda metade do que falta em sentidos opostos
+          // setMag deixa o vetor com esse tamanho mantendo a direcao de A pra B
           delta.setMag((minimo - distancia) * 0.5);
           gatoA.posicao.sub(delta);
           gatoB.posicao.add(delta);
@@ -116,7 +118,6 @@ class Fase extends Cena {
             gato.sentado = true;
             gato.posicaoAlvo = Fase.SLOTS[i];
             Fase.somSentou.tocar();
-            Particulas.criarPo(gato.posicao.x, gato.posicao.y + 12, 8);
             break;
           }
         }
@@ -133,8 +134,6 @@ class Fase extends Cena {
 
     if (todosSentados) {
       this.transicionando = true;
-      Particulas.criarConfete(cursorX, cursorY, 40);
-      Shake.tremer(1.2, 8);
       trocarCena(new VitoriaFase(this.numero, this.timer));
     }
   }

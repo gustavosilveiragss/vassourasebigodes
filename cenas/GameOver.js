@@ -10,7 +10,7 @@ class GameOver extends Cena {
   constructor(faseAtual) {
     super();
     this.faseAtual = faseAtual; // pra retentar a mesma fase
-    GameOver.somGameover.tocar(true);
+    GameOver.somGameover.tocar();
   }
 
   display() {

@@ -6,12 +6,6 @@ class Fifi extends Gato {
   static velocidade = 0.8;
   /** @type {string} */
   static descricao = 'Esse gato vesguinho nunca consegue andar em linha reta';
-  /** @type {{frente: number, costas: number, direita: number, esquerda: number}} */
-  static frames = { frente: 1, costas: 3, direita: 1, esquerda: 1 };
-  static sombras = {
-    andando: { fracaoY: 1.13, fracaoLargura: 0.6 },
-    sentado: { fracaoY: 1.08, fracaoLargura: 0.55 },
-  };
 
   static precarregar() {
     Fifi.somMiado = new Som(['gatos/fifi_1.mp3', 'gatos/fifi_2.mp3'], 180, 0.55);
@@ -24,7 +18,7 @@ class Fifi extends Gato {
   constructor(x, y) {
     super(x, y, 'Fifi');
     this.frames = 0; // frames restantes do burst
-    this.direcao = 0; // angulo atual da fuga em radianos
+    this.direcaoFuga = createVector(0, 0); // pra onde ele ta fugindo agora
   }
 
   mover() {
@@ -33,18 +27,19 @@ class Fifi extends Gato {
     // cursor chegou perto e n ta fugindo ainda? inicia burst
     if (this.frames === 0 && distanciaCursor < 120) {
       this.frames = 40;
-      const fuga = createVector(this.posicao.x - cursorX, this.posicao.y - cursorY);
-      fuga.normalize();
-      this.direcao = atan2(fuga.y, fuga.x);
-      Particulas.criarPo(this.posicao.x, this.posicao.y + 15, 5);
+      // vetor que aponta do cursor pro gato: a direcao inicial da fuga
+      this.direcaoFuga = p5.Vector.sub(this.posicao, createVector(cursorX, cursorY));
+      // normalize deixa o vetor com comprimento 1 (so a direcao), pq o tamanho da
+      // velocidade quem da e Fifi.velocidade la embaixo, n a distancia ate o cursor
+      this.direcaoFuga.normalize();
     }
 
-    // enquanto ta fugindo gira o angulo pra fazer curva
+    // enquanto ta fugindo, gira a direcao um tiquinho por frame pra ele fazer curva (vesgo).
+    // rotate(0.05) roda o vetor 0.05 radianos sem mudar o comprimento dele
     if (this.frames > 0) {
       this.frames--;
-      this.direcao += 0.05;
-      const vetorDirecao = createVector(cos(this.direcao), sin(this.direcao));
-      this.velocidade.add(p5.Vector.mult(vetorDirecao, Fifi.velocidade));
+      this.direcaoFuga.rotate(0.05);
+      this.velocidade.add(p5.Vector.mult(this.direcaoFuga, Fifi.velocidade));
     }
   }
 }

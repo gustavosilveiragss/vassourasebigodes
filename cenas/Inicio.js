@@ -18,6 +18,6 @@ class Inicio extends Cena {
   aoClicar() {
     Cena.somClique.tocar();
     MusicaFundo.iniciar();
-    trocarCena(new IntroFase(FASE_INICIAL, FASE_INICIAL === 1));
+    trocarCena(new IntroFase(FASE_INICIAL));
   }
 }

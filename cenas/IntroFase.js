@@ -1,4 +1,4 @@
-// classes dos gatos novos por fase. info (descricao, sombra) sai da propria classe
+// classes dos gatos novos por fase. info (descricao) sai da propria classe
 const GATOS_NOVOS = {
   1: [Tom],
   2: [Salem, Fifi],
@@ -20,31 +20,16 @@ const DESAFIOS_NOVOS = {
 const CLASSES_FASE = [Fase, Fase1, Fase2, Fase3, Fase4, Fase5];
 
 class IntroFase extends Cena {
-  /**
-   * @param {number} numero
-   * @param {boolean} [comFade]
-   */
-  constructor(numero, comFade = false) {
+  /** @param {number} numero */
+  constructor(numero) {
     super();
     this.numero = numero;
     this.gatosNovos = GATOS_NOVOS[numero];
     this.desafiosNovos = DESAFIOS_NOVOS[numero];
-    this.framesFade = comFade ? 60 : 0;
-    this.framesAtuais = 0;
-  }
-
-  update() {
-    if (this.framesAtuais < this.framesFade) {
-      this.framesAtuais++;
-    }
   }
 
   display() {
     background(Tema.fundo);
-
-    // fade do conteudo, sem afetar o fundo
-    const alpha = this.framesFade === 0 ? 1 : this.framesAtuais / this.framesFade;
-    drawingContext.globalAlpha = alpha;
 
     fill(Tema.texto);
     textAlign(CENTER);
@@ -69,21 +54,15 @@ class IntroFase extends Cena {
         const chaveSprite = classeGato.name.toLowerCase();
         const centroX = inicioX + indiceCard * 320;
 
-        const grupoSprites = SPRITES[chaveSprite];
-        if (grupoSprites && grupoSprites.sentado) {
-          const sprite = grupoSprites.sentado;
+        const sprite = SPRITES[chaveSprite];
+        if (sprite) {
           const maiorLado = max(sprite.width, sprite.height);
           const fatorEscala = 100 / maiorLado;
           const larguraRender = sprite.width * fatorEscala;
           const alturaRender = sprite.height * fatorEscala;
 
-          noStroke();
-          fill(0, 60);
-          const sombraSentado = classeGato.sombras.sentado;
-          const larguraSombra = larguraRender * sombraSentado.fracaoLargura;
-          const sombraY = y + 65 + (alturaRender / 2) * sombraSentado.fracaoY;
-          ellipse(centroX, sombraY, larguraSombra, larguraSombra * 0.25);
-          desenharSpriteComOutline(sprite, centroX, y + 65, larguraRender, alturaRender);
+          imageMode(CENTER);
+          image(sprite, centroX, y + 65, larguraRender, alturaRender);
         } else {
           fill(200);
           noStroke();
@@ -116,8 +95,6 @@ class IntroFase extends Cena {
         const centroX = inicioX + i * 320;
 
         noStroke();
-        fill(0, 60);
-        ellipse(centroX, y + 88, 40, 12);
         fill(desafio.cor);
         ellipse(centroX, y + 60, 50, 50);
 
@@ -153,8 +130,6 @@ class IntroFase extends Cena {
     textAlign(CENTER);
     textSize(16);
     text('Clique para jogar', LARGURA / 2, 555);
-
-    drawingContext.globalAlpha = 1;
   }
 
   /**

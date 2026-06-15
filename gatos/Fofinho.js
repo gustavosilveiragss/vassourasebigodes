@@ -6,12 +6,6 @@ class Fofinho extends Gato {
   static cor = '#6B8F71';
   /** @type {string} */
   static descricao = 'Bravinho mas carinhoso, sai correndo atrás de você rapidamente';
-  /** @type {{frente: number, costas: number, direita: number, esquerda: number}} */
-  static frames = { frente: 1, costas: 0, direita: 0, esquerda: 2 };
-  static sombras = {
-    andando: { fracaoY: 0.95, fracaoLargura: 0.85 },
-    sentado: { fracaoY: 0.85, fracaoLargura: 0.85 },
-  };
 
   static precarregar() {
     Fofinho.somMiado = new Som(['gatos/fofinho_1.mp3', 'gatos/fofinho_2.mp3'], 180, 0.55);
@@ -32,11 +26,12 @@ class Fofinho extends Gato {
       return;
     }
 
-    // dispara em direcao ao cursor
-    const direcao = createVector(cursorX - this.posicao.x, cursorY - this.posicao.y);
-    direcao.normalize();
-    this.velocidade.set(direcao.x * 100, direcao.y * 100);
+    // vetor que aponta do gato pro cursor é a direcao do tiro
+    const aoCursor = p5.Vector.sub(createVector(cursorX, cursorY), this.posicao);
+    // setMag deixa o vetor com tamanho 100 mantendo a direcao
+    // ai o tiro sai sempre com a mesma forca pro lado do cursor, ja viro a velocidade
+    aoCursor.setMag(100);
+    this.velocidade.set(aoCursor);
     this.cooldown = 90;
-    Particulas.criarPo(this.posicao.x, this.posicao.y + 14, 6);
   }
 }

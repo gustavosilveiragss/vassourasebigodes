@@ -1,4 +1,4 @@
-// a vassoura é o cursor. empurra os gatos com forca proporcional à velocidade do mouse
+// a vassoura é o cursor. empurra os gatos pra longe com forca fixa
 class Vassoura {
   /** @type {Som} */
   static somBate;
@@ -6,62 +6,38 @@ class Vassoura {
   static raio = 22;
   /** @type {string} */
   static cor = '#D4A84B';
-  /** @type {string} */
-  static corStroke = '#8B6914';
+  /** @type {number} forca do empurrao */
+  static FORCA = 5;
 
   static precarregar() {
     Vassoura.somBate = new Som(
       ['jogo/vassoura_bate_1.ogg', 'jogo/vassoura_bate_2.ogg'],
-      0,
+      8,
       0.6,
     );
   }
 
-  constructor() {
-    /** @type {Set<Gato>} contato no frame anterior, pra disparar som so na entrada */
-    this.gatosEmContato = new Set();
-  }
-
   /** @param {Gato[]} gatos */
   update(gatos) {
-    // calcula quanto o mouse andou no ultimo frame, em coords logicas
-    const cursorAnteriorX = constrain(pmouseX / ESCALA, 0, LARGURA - 1);
-    const cursorAnteriorY = constrain(pmouseY / ESCALA, 0, ALTURA - 1);
-    const dx = cursorX - cursorAnteriorX;
-    const dy = cursorY - cursorAnteriorY;
-    const velocidadeMouse = sqrt(dx * dx + dy * dy);
-
-    const novos = new Set();
+    const cursor = createVector(cursorX, cursorY);
 
     for (let i = 0; i < gatos.length; i++) {
       const gato = gatos[i];
       if (gato.sentado) continue;
 
-      const distancia = dist(cursorX, cursorY, gato.posicao.x, gato.posicao.y);
-      if (distancia < Vassoura.raio + gato.raio) {
-        novos.add(gato);
+      // aoGato é o vetor do cursor ate o gato, o mag() é o tamanho dele q é a distancia
+      // se for menor q a soma dos raios a vassoura encostou no gato
+      const aoGato = p5.Vector.sub(gato.posicao, cursor);
+      if (aoGato.mag() < Vassoura.raio + gato.raio) {
+        // normalize deixa o vetor com tamanho 1 so a direcao pra longe do cursor
+        // o tamanho do empurrao quem da é a FORCA nao a distancia
+        aoGato.normalize();
+        gato.empurrar(aoGato, Vassoura.FORCA * gato.friccao);
 
-        // empurra no sentido oposto ao cursor
-        const direcao = createVector(gato.posicao.x - cursorX, gato.posicao.y - cursorY);
-        direcao.normalize();
-        const forca = (velocidadeMouse * 0.4 + 0.5) * gato.friccao;
-        gato.empurrar(direcao, forca);
-        
-        // som so no primeiro contato, evita spam quando gato fica preso no canto
-        if (!this.gatosEmContato.has(gato)) {
-          Vassoura.somBate.tocar();
-          gato.miar();
-
-          const pontoImpactoX = (cursorX + gato.posicao.x) / 2;
-          const pontoImpactoY = (cursorY + gato.posicao.y) / 2;
-          Particulas.criarPo(pontoImpactoX, pontoImpactoY, 4);
-          Particulas.criarPelo(pontoImpactoX, pontoImpactoY, 3, gato.cor, direcao.x, direcao.y);
-          Shake.tremer(0.6, 4);
-        }
+        Vassoura.somBate.tocar();
+        gato.miar();
       }
     }
-
-    this.gatosEmContato = novos;
   }
 
   display() {
